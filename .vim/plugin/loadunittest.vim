@@ -12,7 +12,7 @@ import os
 fileName = vim.eval("@%").split("/")[-1]
 utFileName = "test_" + fileName
 
-fullPath = vim.eval("expand('%:p')")
+fullPath = os.path.join(vim.eval("getcwd()"), vim.eval("expand('%')"))
 splitPath = fullPath.split("/")
 yycliIndex = splitPath.index("yycli")
 

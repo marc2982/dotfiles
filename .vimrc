@@ -108,7 +108,7 @@ def createSphinxDocs():
 
 EOL
 
-map <C-s> :py createSphinxDocs()<cr>
+map <leader>d :py createSphinxDocs()<cr>
 
 " source .vimrc on command
 nnoremap <leader>sv :source $MYVIMRC<cr>
