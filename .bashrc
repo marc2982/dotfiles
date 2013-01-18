@@ -4,7 +4,9 @@ RED='\[\e[0;31m\]'
 GREEN='\[\e[0;32m\]'
 YELLOW='\[\e[0;33m\]'
 BLUE='\[\e[0;34m\]'
+#BLUE='\[\033[32m\]'
 PURPLE='\[\e[0;35m\]'
+#PURPLE='\[\033[35m\]'
 CYAN='\[\e[0;36m\]'
 WHITE='\[\e[0;37m\]'
 BLACKBG='\[\e[40m\]'
@@ -34,6 +36,8 @@ trap ". ~/.bashrc" USR1
 alias py27="/usr/bin/python2.7"
 alias py26="/usr/bin/python2.6"
 
+alias nose27='/usr/local/bin/nosetests'
+
 alias hulk="ssh service@10.6.215.118"
 alias biggie="ssh service@vmvisor-002"
 alias shin="ssh service@vmvisor-009"
@@ -49,18 +53,18 @@ alias gator2="ssh service@10.6.209.100"
 alias corrado="ssh service@10.6.215.103"
 alias ls="ls --color"
 alias tree="tree -C"
-alias cov="~/bin/quickCoverage.sh"
 alias runnervm="~runner/bin/ctest wildcat-nst-e vncviewer"
 alias makeHulkVnc="vncserver :68 -name HULK -depth 24 -geometry 1200x900"
 alias makeBiggieVnc="vncserver :72 -name BIGGIE -depth 24 -geometry 1200x900"
 alias fixType="~/Desktop/test.sh; xmodmap -e \"keycode 108 = Alt_R\"; xmodmap ~/modmap/modmap"
 
-alias chimera="cd ~/git/chimera/yycli"
+alias chimera="cd ~/git/chimera/yycli; deactivate; source ~/virtual_envs/chimeraEnv/bin/activate"
 alias zephauto="cd /spgear/zeph_auto/"
 alias ui="cd ~/git/ui/com-yottayotta-smsv2/src/java/com/yottayotta/smsv2"
-alias chimerareview="cd ~/git/chimeraReview/chimera/yycli"
+alias chimerareview="cd ~/git/chimeraReview/chimera/yycli; deactivate; source ~/virtual_envs/chimeraEnv/bin/activate"
 alias chimeratestcases="cd ~/git/chimeraTestcases/chimera_api_tests"
-alias chimera3="cd ~/git/chimera3/yycli"
+alias chimera3="cd ~/git/chimera3/yycli; deactivate; source ~/virtual_envs/chimeraEnv/bin/activate"
+alias metrics="cd ~/git/chimera_metrics; deactivate; source ~/virtual_envs/metricsEnv/bin/activate"
 
 alias runnerpewpewve="cd ~/runner/testing/sms-pewpewve"
 alias runnerwildcatnste="cd ~runner/testing/wildcat-nst-e/"
@@ -77,53 +81,37 @@ alias deleteClassFiles="find . -name '*py.class' | xargs rm"
 
 alias windows='rdesktop bryanm3-zw.spgear.lab.emc.com -g 1225x975 -E'
 
+#alias apacherestart='sudo /etc/init.d/apache2 restart; sudo /etc/init.d/memcached restart'
+alias apacherestart='sudo /etc/init.d/apache2 restart'
+
 function mkcd() {
     mkdir -p "$@"
     cd "$@"
 }
 
-export PS1="$USER\u$DIVIDER@$HOST\h$DIVIDER:$DIR\w$DIVIDER> "
-
-export PATH=/spgear/tools/bin:/bin:/usr/bin:/sbin:/usr/local/bin:/opt/rational/clearcase/bin:/usr/games:/home/runner/bin
+export PATH=/spgear/tools/bin:/bin:/usr/bin:/sbin:/usr/local/bin:/opt/rational/clearcase/bin:/usr/games:/home/runner/bin:/spgear/spgear/bin
 export PYTHONPATH=:~/git/chimera/yycli/:~/git/chimera/yycli/commonPythonLibrary/
 export PYTHONSTARTUP=~/.pythonrc
 
-bind C-p:history-search-backward
-bind C-n:history-search-forward
+if [[ "$-" == *i* ]]; then # interactive
+    bind C-p:history-search-backward
+    bind C-n:history-search-forward
+fi
 
-# GIT STUFF
-# ===============================================================================
-## Context sensitive aliases
-# make all function variables local
-# undo aliases of previous context
-# set up new context sensitive aliases
-# try not to run any non-native bash cmds... this has to execute a lot
-__git_undo() {
-    unalias br ch co ca st log masterfreeze devfreeze freezefreeze pl gitdiffmeld gsmup
-}
-__git_do() {
-    local git_br
-    read git_br < $1/.git/HEAD
-    __working_branch=${git_br##*refs/heads/}
-    [ "$git_br" == "$__working_branch" ] && __working_branch="(no branch)"
-    __working_in="${1##*/}"
-    __working_branch="[$__working_branch]"
-    __working_dir="${PWD##$1}"
-    __undo_context=__git_undo
-    alias br="git branch"
-    alias ch="git checkout"
-    alias co="git commit -v -a"
-    alias ca="git commit -v -a --amend"
-    alias st="git status"
-    alias log="git log"
-    alias masterfreeze="post-review --guess-summary --guess-description -p --branch origin/master"
-    alias devfreeze="post-review --guess-summary --guess-description -p --branch origin/dev"
-    alias freezefreeze="post-review --guess-summary --guess-description -p --branch origin/freeze"
-    alias postDiff="post-review --diff-only -p -r"
-    alias pl="pylint --rcfile=/home/bryanm3/git/chimera/tools/pyLintRcFile.cfg -f colorized -r n --include-ids=y"
-    alias gitdiffmeld="git difftool -y -t meld"
-    alias gsmup="pushd /home/bryanm3/git/chimera; git submodule update; popd"
-}
+alias br="git branch"
+alias ch="git checkout"
+alias co="git commit -v -a"
+alias ca="git commit -v -a --amend"
+alias st="git status"
+alias log="git log"
+alias masterfreeze="post-review --guess-summary --guess-description -p --branch origin/master"
+alias devfreeze="post-review --guess-summary --guess-description -p --branch origin/dev"
+alias freezefreeze="post-review --guess-summary --guess-description -p --branch origin/freeze"
+alias metricsfreeze="post-review --guess-summary --guess-description -p --branch origin/b/master --target-people steffk,line6,campbr9"
+alias postDiff="post-review --diff-only -p -r"
+alias pl="pylint --rcfile=/home/bryanm3/git/chimera/tools/pyLintRcFile.cfg -f colorized -r n --include-ids=y"
+alias gitdiffmeld="git difftool -y -t meld"
+alias gsmup="pushd /home/bryanm3/git/chimera; git submodule update; popd"
 
 function newbr() {
     git checkout -b "master_$@" origin/master
@@ -137,42 +125,14 @@ function newfreezebr() {
     git checkout -b "freeze_$@" origin/freeze
 }
 
-function updateFixdTickets() {
-    echo "Gathering tickets in FIXD/BUILDTBD or FIXD/VERIFY......"
-    LIST=`csetool zeph_auto query --expr "tickets:state:FIXD/BUILDTBD|tickets:state:FIXD/VERIFY" --form id | xargs`
-    echo "Updating to 'fixed in $@'"
-    for rid in $LIST; do \
-        echo $rid;
-        csetool zeph_auto ticket:update --rid $rid --state CLSD/NOTEST --buildFixed $@ --description "Fixed in $@. We are marking it CLSD/NOTEST. The submitter can leave it in that state, change it to CLSD/VERIFIED, or re-open if the problem is not fixed.";
-    done;
+function newmetricsbr() {
+    git checkout -b "$@" origin/b/master
 }
 
-__git_dir() {
-    local tmppath
-    tmppath=$PWD
-    while [ "$tmppath" != "" ]; do
-        [ -d "$tmppath"/.git ] && __git_do "$tmppath" && return 0
-        [ ${tmppath##*/} == .git ] && return 1
-        tmppath=${tmppath%/*}
-    done
-    return 1
+function cov() {
+    ~/bin/quickCoverage.sh $@
 }
-__other_dir() {
-    __working_in=
-    __working_branch=
-    __working_dir=
-    __undo_context=true
-}
-__prompt_command() {
-    $__undo_context
-    __git_dir || __other_dir  # add more as needed
-    echo -ne "\033]0;$__working_in$__working_branch$__working_dir\007"
-    if __git_dir eq 1
-    then
-        #export PS1='\[\e[31m\]`r=$?; test $r -ne 0 && echo "[ERR-$r] "`\[\e[0m\]$__working_in\[\e[33m\]$__working_branch\[\e[0m\]$__working_dir$'
-        export PS1="$CYAN$__working_branch$USER\u$DIVIDER@$HOST\h$DIVIDER:$DIR\w$DIVIDER\$ "
-    else
-        export PS1="$USER\u$DIVIDER@$HOST\h$DIVIDER:$DIR\w$DIVIDER\$ "
-    fi
-}
-PROMPT_COMMAND=__prompt_command
+
+source ~/.git-completion.bash
+export GIT_PS1_SHOWDIRTYSTATE=1
+export PS1='\[\e[0;36m\]$(__git_ps1)\[\e[0;35m\]\u\[\e[0;37m\]@\[\e[0;32m\]\h\[\e[0;37m\]:\[\e[0;33m\]\w\[\e[0;37m\]\$ '

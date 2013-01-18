@@ -38,6 +38,10 @@ colorscheme molokai
 inoremap jf <ESC>
 inoremap <ESC> <nop>
 
+" map < and > to repeat tabbing action without losing highlight
+vnoremap < <gv
+vnoremap > >gv
+
 " remap F1 to ESC because I hit it accidentally
 inoremap <F1> <ESC>
 vnoremap <F1> <ESC>
@@ -68,7 +72,7 @@ set wildmenu
 nnoremap <F2> :set nonumber!<CR>:set foldcolumn=0<CR>
 
 " load unit test file!
-nmap <F3> :LoadUnitTestFile<CR>
+nnoremap <F3> :LoadUnitTestFile<CR>
 
 " enable pylint checking (requires pylint.vim plugin in ~/.vim/compiler/
 " By default, this opens a 'Quick Fix' window  with pylint violations every
@@ -110,8 +114,22 @@ EOL
 
 map <leader>d :py createSphinxDocs()<cr>
 
+" syntastic stuff
+"set statusline+=%#warningmsg#
+"set statusline+=%{SyntasticStatuslineFlag()}
+"set statusline+=%*
+let g:syntastic_error_signs=1
+"let g:syntastic_check_on_open=1
+let g:syntastic_mode_map = { 'mode': 'passive',
+                           \ 'active_filetypes': ['python'],
+                           \ 'passive_filetypes': [] }
+
+
 " source .vimrc on command
 nnoremap <leader>sv :source $MYVIMRC<cr>
 
 " automatically source .vimrc so don't have to restart vim
 autocmd! bufwritepost .vimrc source $MYVIMRC
+
+" Yaml
+au BufNewFile,BufRead *.yaml,*.yml    setf yaml
