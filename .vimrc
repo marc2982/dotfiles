@@ -119,7 +119,7 @@ map <leader>d :py createSphinxDocs()<cr>
 "set statusline+=%{SyntasticStatuslineFlag()}
 "set statusline+=%*
 let g:syntastic_error_signs=1
-"let g:syntastic_check_on_open=1
+let g:syntastic_check_on_open=1
 let g:syntastic_mode_map = { 'mode': 'passive',
                            \ 'active_filetypes': ['python'],
                            \ 'passive_filetypes': [] }
