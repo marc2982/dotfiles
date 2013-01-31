@@ -133,3 +133,7 @@ autocmd! bufwritepost .vimrc source $MYVIMRC
 
 " Yaml
 au BufNewFile,BufRead *.yaml,*.yml    setf yaml
+
+" Powerline
+set laststatus=2
+"let g:Powerline_symbols = 'fancy'
