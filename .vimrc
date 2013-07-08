@@ -3,6 +3,7 @@ syntax on
 set nocompatible
 
 call pathogen#infect()
+call pathogen#helptags()
 
 " tabs
 set expandtab
@@ -72,13 +73,13 @@ set wildmenu
 nnoremap <F2> :set nonumber!<CR>:set foldcolumn=0<CR>
 
 " load unit test file!
-nnoremap <F3> :LoadUnitTestFile<CR>
+"nnoremap <F3> :LoadUnitTestFile<CR>
 
 " enable pylint checking (requires pylint.vim plugin in ~/.vim/compiler/
 " By default, this opens a 'Quick Fix' window  with pylint violations every
 " time the buffer is written
-autocmd FileType python compiler pylint
-nmap <F5> :Pylint<CR>
+"autocmd FileType python compiler pylint
+"nmap <F5> :Pylint<CR>
 
 " Removes whitespace at the end of a line before saving
 autocmd BufWritePre *.* :%s/\s\+$//e
@@ -120,8 +121,10 @@ map <leader>d :py createSphinxDocs()<cr>
 "set statusline+=%*
 let g:syntastic_error_signs=1
 let g:syntastic_check_on_open=1
+let g:syntastic_python_checkers=['flake8', 'pylint']
+let g:syntastic_javascript_checkers=['jslint.vim']
 let g:syntastic_mode_map = { 'mode': 'passive',
-                           \ 'active_filetypes': ['python'],
+                           \ 'active_filetypes': ['python', 'javascript'],
                            \ 'passive_filetypes': [] }
 
 
@@ -135,5 +138,9 @@ autocmd! bufwritepost .vimrc source $MYVIMRC
 au BufNewFile,BufRead *.yaml,*.yml    setf yaml
 
 " Powerline
-set laststatus=2
 "let g:Powerline_symbols = 'fancy'
+"set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
+set laststatus=2
+
+" Use Jordan's awesome unit test thing
+:source /home/bryanm3/git/chimera/tools/unittest.vim
