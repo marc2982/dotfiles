@@ -25,6 +25,8 @@ alias asdf1="ssh service@10.6.209.63"
 alias asdf2="ssh service@10.6.209.37"
 alias gator1="ssh service@10.6.209.99"
 alias gator2="ssh service@10.6.209.100"
+alias gengar1="ssh service@10.6.209.203"
+alias gengar2="ssh service@10.6.209.204"
 alias heisenburg="ssh service@10.6.213.180"
 alias corrado="ssh service@10.6.215.103"
 alias ls="ls --color"
@@ -35,7 +37,7 @@ alias makeBiggieVnc="vncserver :72 -name BIGGIE -depth 24 -geometry 1200x900"
 alias fixType="~/Desktop/test.sh; xmodmap -e \"keycode 108 = Alt_R\"; xmodmap ~/modmap/modmap"
 
 alias chimera="cd ~/git/chimera/yycli; deactivate; source ~/virtual_envs/chimeraEnv/bin/activate"
-alias goat="deactivate; cd ~/git/chimera_goat; source ~/virtual_envs/goat/bin/activate"
+alias goatdev="deactivate; cd ~/git/chimera_goat; source ~/virtual_envs/goat/bin/activate"
 alias zephauto="cd /spgear/zeph_auto/"
 alias ui="cd ~/git/ui/com-yottayotta-smsv2/src/java/com/yottayotta/smsv2"
 alias chimerareview="cd ~/git/chimeraReview/chimera/yycli; deactivate; source ~/virtual_envs/chimeraEnv/bin/activate"
@@ -68,7 +70,6 @@ function mkcd() {
 }
 
 export PATH=/home/bryanm3/special_paths:/spgear/tools/bin:/bin:/usr/bin:/sbin:/usr/local/bin:/opt/rational/clearcase/bin:/usr/games:/home/runner/bin:/spgear/spgear/bin
-export PYTHONPATH=:~/git/chimera/yycli/:~/git/chimera/yycli/commonPythonLibrary/
 export PYTHONSTARTUP=~/.pythonrc
 
 if [[ "$-" == *i* ]]; then # interactive
@@ -82,14 +83,14 @@ alias co="git commit -v -a"
 alias ca="git commit -v -a --amend"
 alias st="git status"
 alias log="git log"
-alias masterfreeze="post-review --guess-summary --guess-description --branch origin/master -p"
-alias devfreeze="post-review --guess-summary --guess-description --branch origin/dev -p"
-alias freezefreeze="post-review --guess-summary --guess-description --branch origin/freeze -p"
-alias metricsfreeze="post-review --guess-summary --guess-description --branch origin/b/master --target-people campbr9,podloa -p"
 alias postDiff="post-review --diff-only --guess-description -p -r"
 alias pl="pylint --rcfile=/home/bryanm3/git/chimera/tools/pyLintRcFile.cfg -f colorized -r n --include-ids=y"
 alias gitdiffmeld="git difftool -y -t meld"
 alias gsmup="pushd /home/bryanm3/git/chimera; git submodule update; popd"
+
+function freeze() {
+    post-review --guess-summary --guess-description --branch `git tracking` -p
+}
 
 function newbr() {
     git checkout -b "master_$@" origin/master
@@ -108,11 +109,15 @@ function newmetricsbr() {
 }
 
 function cov() {
-    ~/bin/quickCoverage.sh $@
+    ~/bin/code_coverage/coverage.sh $@
 }
 
 function send_key {
     ssh $1 "echo $(cat /home/torbij/.ssh/id_rsa.pub) >> ~/.ssh/authorized_keys "
+}
+
+function check_file() {
+    echo 'PEP8:' && pep8 $@ && echo 'PEP257:' && pep257 $@
 }
 
 function prompt1() {
@@ -132,3 +137,6 @@ function prompt1() {
 prompt1
 
 export TERM=xterm-256color
+
+#source ~/.bash_completion.d/python-argcomplete.sh
+#eval "$(register-python-argcomplete goat)"

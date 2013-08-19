@@ -20,6 +20,8 @@ set backspace=eol,start,indent
 set autoindent
 set showmatch " Show matching brackets
 
+set colorcolumn=80
+
 " searching
 set incsearch
 set hlsearch
@@ -121,12 +123,14 @@ map <leader>d :py createSphinxDocs()<cr>
 "set statusline+=%*
 let g:syntastic_error_signs=1
 let g:syntastic_check_on_open=1
-let g:syntastic_python_checkers=['flake8', 'pylint']
+let g:syntastic_check_on_save=1
+let g:syntastic_aggregate_errors=1
+let g:syntastic_always_populate_loc_list=1
+let g:syntastic_python_checkers=['flake8', 'pep257']
 let g:syntastic_javascript_checkers=['jslint.vim']
 let g:syntastic_mode_map = { 'mode': 'passive',
                            \ 'active_filetypes': ['python', 'javascript'],
                            \ 'passive_filetypes': [] }
-
 
 " source .vimrc on command
 nnoremap <leader>sv :source $MYVIMRC<cr>
@@ -141,6 +145,3 @@ au BufNewFile,BufRead *.yaml,*.yml    setf yaml
 "let g:Powerline_symbols = 'fancy'
 "set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
 set laststatus=2
-
-" Use Jordan's awesome unit test thing
-:source /home/bryanm3/git/chimera/tools/unittest.vim
