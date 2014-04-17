@@ -1,116 +1,117 @@
 " Run python unittests from vim.
 "
-" You need to tell unittest.vim how to work with your project using the
-" g:unittest_projects variable. See CUSTOMIZATION below.
+" You need to tell vipyut how to work with your project using the
+" g:vipyut_projects variable. See CUSTOMIZATION below.
 "
 " The current project is determined using vim's current working directory.
 "
 " COMMANDS:
 "
-" Unittest{Open,Split,VSplit}
+" Vipyut{Open,Split,VSplit}
 "   With a project module open in the current window, open the corresponding
 "   unittests. This also works the other way: if unittests are open in the
 "   current buffer the source will be opened.
 "
-" Unittest
+" Vipyut
 "   With either the the module to be tested or its unit tests open in the
 "   current window, run that module's unittests and populate the quickfix list
 "   (see :help quickfix) with the locations of errors and failures.
 "
-" UnittestAll
+" VipyutAll
 "   Run all the project's unittests.
 "
-" UnittestFailed{,All}
-"   Run all the tests that failed during the last invocation of Unittest{,All}
+" VipyutFailed{,All}
+"   Run all the tests that failed during the last invocation of Vipyut{,All}
 "
 "
 " CUSTOMIZATION:
 "
-" g:unittest_projects (default: setup for Chimera and goat)
+" g:vipyut_projects (default: setup for Chimera and goat)
 "   A list of dicts containing the following keys:
 "     pattern: Used to determine which project is currently in use.
 "         pattern must match the absolute path to the repository root.
 "     unittests: repo-relative path to unittest directory
 "     source2unit: List of substitute() [pat, sub] args to transform an
 "         absolute source module filepath to the corresponding unittest
-"         module.
-"     unit2source: Same as source2unit, but in the other direction.
+"         module, relative to the unittest root directory.
+"     unit2source: Same as source2unit, but in the other direction, and the
+"         resulting path must be relative to the repository root directory.
 "     runner: Runner command.
 "         Instances of '$REPOROOT' will be replaced with the absolute path to
 "         the project's repository root.
 "
-" g:unittest_resultFilepath (default: '/tmp/runUnitTests')
+" g:vipyut_resultFilepath (default: '/tmp/runUnitTests')
 "   File to store test runner output.
 "
-" g:unittest_openOutputOnOk (default: 0)
+" g:vipyut_openOutputOnOk (default: 0)
 "   If 1, open the test runner output window even if all tests passed.
 "
-" g:unittest_openOutputOnFail (default: 1)
+" g:vipyut_openOutputOnFail (default: 1)
 "   If 1, open the window containing test runner output when tests fail.
 "
-" g:unittest_openQuickFix (default: 0)
+" g:vipyut_openQuickFix (default: 0)
 "   If 1, open the quickfix window when tests fail.
 "
-" g:unittest_focus (default: 'keep')
+" g:vipyut_focus (default: 'keep')
 "   Set focus to the given window after running tests:
-"       'keep': active window when Unittest* was called
+"       'keep': active window when Vipyut* was called
 "       'qf': quickfix window
 "       'out': unittest output
 "
 
-command! UnittestOpen exe ":e " . <SID>OtherPath(expand('%:p'))
-command! UnittestSplit exe ":sp " . <SID>OtherPath(expand('%:p'))
-command! UnittestVSplit exe ":vsp " . <SID>OtherPath(expand('%:p'))
-command! Unittest call <SID>Run(expand('%:p'), 1, 0)
-command! UnittestAll call <SID>Run('', 1, 0)
-command! UnittestFailed call <SID>Run(expand('%:p'), 1, 1)
-command! UnittestFailedAll call <SID>Run('', 1, 1)
-command! UnittestOpenResults exe ":e " . g:unittest_resultFilepath
+command! VipyutOpen exe ":e " . <SID>OtherPath(expand('%:p'))
+command! VipyutSplit exe ":sp " . <SID>OtherPath(expand('%:p'))
+command! VipyutVSplit exe ":vsp " . <SID>OtherPath(expand('%:p'))
+command! Vipyut call <SID>Run(expand('%:p'), 1, 0)
+command! VipyutAll call <SID>Run('', 1, 0)
+command! VipyutFailed call <SID>Run(expand('%:p'), 1, 1)
+command! VipyutFailedAll call <SID>Run('', 1, 1)
+command! VipyutOpenResults exe ":e " . g:vipyut_resultFilepath
 
-nnoremap <leader>ur :Unittest<cr>
-nnoremap <leader>ua :UnittestAll<cr>
-nnoremap <leader>ufr :UnittestFailed<cr>
-nnoremap <leader>ufa :UnittestFailedAll<cr>
-nnoremap <leader>uo :UnittestOpen<cr>
-nnoremap <leader>us :UnittestSplit<cr>
-nnoremap <leader>uv :UnittestVSplit<cr>
+nnoremap <leader>ur :Vipyut<cr>
+nnoremap <leader>ua :VipyutAll<cr>
+nnoremap <leader>ufr :VipyutFailed<cr>
+nnoremap <leader>ufa :VipyutFailedAll<cr>
+nnoremap <leader>uo :VipyutOpen<cr>
+nnoremap <leader>us :VipyutSplit<cr>
+nnoremap <leader>uv :VipyutVSplit<cr>
 
-hi UnittestPass term=reverse ctermfg=white ctermbg=darkgreen guifg=white guibg=green
-hi UnittestFail   term=reverse ctermfg=white ctermbg=red guifg=white guibg=red
+hi VipyutPass term=reverse ctermfg=white ctermbg=darkgreen guifg=white guibg=green
+hi VipyutFail   term=reverse ctermfg=white ctermbg=red guifg=white guibg=red
 
-if !exists('g:unittest_resultFilepath')
-    let g:unittest_resultFilepath = '/tmp/runUnitTests'
+if !exists('g:vipyut_resultFilepath')
+    let g:vipyut_resultFilepath = '/tmp/runUnitTests'
 endif
 
-if !exists('g:unittest_openOutputOnOk')
-    let g:unittest_openOutputOnOk = 0
+if !exists('g:vipyut_openOutputOnOk')
+    let g:vipyut_openOutputOnOk = 0
 endif
 
-if !exists('g:unittest_openOutputOnFail')
-    let g:unittest_openOutputOnFail = 1
+if !exists('g:vipyut_openOutputOnFail')
+    let g:vipyut_openOutputOnFail = 1
 endif
 
-if !exists('g:unittest_openQuickFix')
-    let g:unittest_openQuickFix = 0
+if !exists('g:vipyut_openQuickFix')
+    let g:vipyut_openQuickFix = 0
 endif
 
-if !exists('g:unittest_focus')
-    let g:unittest_focus = 'keep'
+if !exists('g:vipyut_focus')
+    let g:vipyut_focus = 'keep'
 endif
 
-if !exists('g:unittest_projects')
-    let g:unittest_projects = [
+if 1 || !exists('g:vipyut_projects')
+    let g:vipyut_projects = [
         \ {
             \ 'pattern': '\v/chimera[0-9]?(/|$)',
             \ 'unittests': 'yycli/testHarness/unitTests',
-            \ 'source2unit': ['\v.*/yycli/(.*)/([^/]*)', 'yycli/testHarness/unitTests/\1/test_\2'],
+            \ 'source2unit': ['\v.*/yycli/(.*)/([^/]*)', '\1/test_\2'],
             \ 'unit2source': ['\v.*/unitTests/(.*)/test_([^/]*)', 'yycli/\1/\2'],
-            \ 'runner': '$REPOROOT/yycli/runUnitTests.py',
+            \ 'runner': '$REPOROOT/yycli/runUnitTests.py -w $REPOROOT/yycli/testHarness/unitTests/',
         \ },
         \ {
             \ 'pattern': '\v/(chimera_)?goat[0-9]?(/|$)',
             \ 'unittests': 'goat/tests/unit',
-            \ 'source2unit': ['\v.*/goat/(.*)/([^/]*)', 'goat/tests/unit/\1/test_\2'],
+            \ 'source2unit': ['\v.*/goat/(.*)/([^/]*)', '\1/test_\2'],
             \ 'unit2source': ['\v.*/tests/unit/(.*)/test_([^/]*)', 'goat/\1/\2'],
             \ 'runner': 'nosetests -c $REPOROOT/setup.cfg',
         \ },
@@ -118,7 +119,7 @@ if !exists('g:unittest_projects')
 endif
 
 " filepath and bufname for results
-let g:unittest_resultFilepath = '/tmp/runUnitTests'
+let g:vipyut_resultFilepath = '/tmp/runUnitTests'
 let s:lastpath = ''
 
 " active buffer when Run was called.
@@ -126,14 +127,14 @@ let s:origBufnr = 0
 let s:qfBufnr = 0
 
 
-function! UnittestPrintConfig()
+function! VipyutPrintConfig()
     let vars = [
-        \ 'g:unittest_resultFilepath',
-        \ 'g:unittest_openOutputOnOk',
-        \ 'g:unittest_openOutputOnFail',
-        \ 'g:unittest_openQuickFix',
-        \ 'g:unittest_focus',
-        \ 'g:unittest_projects',
+        \ 'g:vipyut_resultFilepath',
+        \ 'g:vipyut_openOutputOnOk',
+        \ 'g:vipyut_openOutputOnFail',
+        \ 'g:vipyut_openQuickFix',
+        \ 'g:vipyut_focus',
+        \ 'g:vipyut_projects',
     \ ]
     for var in vars
         exe printf('echo "%s=%s"', var, string(eval(var)))
@@ -156,23 +157,23 @@ function! <SID>Run(fullpath, saveIds, onlyFailedIds)
     let command = s:runnerCommand(a:fullpath, a:saveIds, a:onlyFailedIds)
     echom printf('Running "%s"...', command)
     let lines = split(system(command), '\n')
-    cal writefile(lines, g:unittest_resultFilepath)
+    cal writefile(lines, g:vipyut_resultFilepath)
 
     redraw
     cal setqflist(s:unittestFailureLocations(lines))
     if lines[-1] =~ '^OK'
-        if g:unittest_openOutputOnOk
+        if g:vipyut_openOutputOnOk
             cal s:openWindow(lines)
         else
             cal s:refreshWindow()
         endif
     else
-        if g:unittest_openOutputOnFail
+        if g:vipyut_openOutputOnFail
             cal s:openWindow(lines)
         else
             cal s:refreshWindow()
         endif
-        if g:unittest_openQuickFix
+        if g:vipyut_openQuickFix
             copen
             let s:qfBufnr = bufnr('%')
         endif
@@ -190,11 +191,12 @@ function! s:runnerCommand(fullpath, saveIds, onlyFailedIds)
     let relativeRepoRoot = fnamemodify(repoRoot, ':~:.')
     let runAll = (path == '')
     let runner = project['runner']
-    let runner = substitute(runner, '\$REPOROOT', relativeRepoRoot, '')
+    let runner = substitute(runner, '\$REPOROOT', relativeRepoRoot, 'g')
     cal add(command, runner)
     cal extend(command, s:saveIdArgs(runAll, a:saveIds, a:onlyFailedIds))
     if path != ''
-        cal add(command, s:relpath(project['unittests'], path))
+        let absUnittestDir = repoRoot . '/' . project['unittests']
+        cal add(command, s:relpath(absUnittestDir, path))
     endif
     return join(command)
 endfunction
@@ -202,7 +204,7 @@ endfunction
 function! s:pathToTest(fullpath)
     if a:fullpath == ''
         return ''
-    elseif bufname('%') ==# g:unittest_resultFilepath && s:lastpath != ''
+    elseif bufname('%') ==# g:vipyut_resultFilepath && s:lastpath != ''
         return s:lastpath
     elseif s:isUnittest(a:fullpath)
         return a:fullpath
@@ -230,10 +232,11 @@ endfunction
 
 function! <SID>OtherPath(fullpath)
     if s:isUnittest(a:fullpath)
-        return s:unittest2Source(a:fullpath)
+        let path = s:unittest2Source(a:fullpath)
     else
-        return s:source2Unittest(a:fullpath)
+        let path = s:source2Unittest(a:fullpath)
     endif
+    return fnamemodify(path, ':~:.')
 endfunction
 
 function! s:isUnittest(fullpath)
@@ -247,13 +250,22 @@ endfunction
 function! s:source2Unittest(fullpath)
     let project = s:project()
     let [pat, sub] = project['source2unit']
-    return substitute(a:fullpath, pat, sub, '')
+    let abs = join([
+        \ s:repoRoot(),
+        \ project['unittests'],
+        \ substitute(a:fullpath, pat, sub, ''),
+    \ ], '/')
+    return abs
 endfunction
 
 function! s:unittest2Source(fullpath)
     let project = s:project()
     let [pat, sub] = project['unit2source']
-    return substitute(a:fullpath, pat, sub, '')
+    let abs = join([
+        \ s:repoRoot(),
+        \ substitute(a:fullpath, pat, sub, ''),
+    \ ], '/')
+    return abs
 endfunction
 
 " It might be easier to do this using 'errorformat'.
@@ -310,7 +322,7 @@ function! s:unittestFailureLocations(nosetest_output)
 endfunction
 
 function! s:refreshWindow()
-    let buffer_name = g:unittest_resultFilepath
+    let buffer_name = g:vipyut_resultFilepath
     let window = bufwinnr(buffer_name)
     if window != -1
         exe printf('%dwincmd w', window)
@@ -319,7 +331,7 @@ function! s:refreshWindow()
 endfunction
 
 function! s:openWindow(lines)
-    let buffer_name = g:unittest_resultFilepath
+    let buffer_name = g:vipyut_resultFilepath
     let window = bufwinnr(buffer_name)
     if window != -1
         exe printf('%dwincmd w', window)
@@ -339,10 +351,10 @@ function! s:printSummary(lines)
     let failures = str2nr(get(groups, 1, 0))
     let notPassed = failures + errors
     if notPassed > 0
-        echohl UnittestFail
+        echohl VipyutFail
         let msg = printf('%d of %d failed', notPassed, run)
     else
-        echohl UnittestPass
+        echohl VipyutPass
         let msg = printf('All %d tests passed', run)
     endif
     echon msg repeat(' ', &columns - strlen(msg) - 1)
@@ -351,14 +363,14 @@ endfunction
 
 function! s:focus()
     let buffer = -1
-    if g:unittest_focus == 'keep'
+    if g:vipyut_focus == 'keep'
         let buffer = s:origBufnr
-    elseif g:unittest_focus == 'qf'
+    elseif g:vipyut_focus == 'qf'
         let buffer = s:qfBufnr
-    elseif g:unittest_focus == 'out'
-        let buffer = bufnr(g:unittest_resultFilepath)
+    elseif g:vipyut_focus == 'out'
+        let buffer = bufnr(g:vipyut_resultFilepath)
     else
-        echom printf('Invalid g:unittest_focus: "%s"', g:unittest_focus)
+        echom printf('Invalid g:vipyut_focus: "%s"', g:vipyut_focus)
     endif
     if buffer < 0 || bufwinnr(buffer) < 0
         let buffer = s:origBufnr
@@ -367,13 +379,13 @@ function! s:focus()
 endfunction
 
 function! s:project()
-    let repoRoot = s:repoRoot()
-    for project in g:unittest_projects
-        if repoRoot =~ project['pattern']
+    let repo_root = s:repoRoot()
+    for project in g:vipyut_projects
+        if repo_root =~ project['pattern']
             return project
         endif
     endfor
-    throw 'No project found for ' . repoRoot
+    throw 'No project found for ' . repo_root
 endfunction
 
 function! s:repoRoot()

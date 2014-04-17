@@ -5,6 +5,8 @@ set nocompatible
 call pathogen#infect()
 call pathogen#helptags()
 
+set encoding=utf-8
+
 " tabs
 set expandtab
 set tabstop=4
@@ -28,13 +30,10 @@ set hlsearch
 
 hi Search ctermbg=4
 
-" maps <leader> (in my case, \) + space to clear a search to remove highlighting
-:noremap <leader><space> :noh<cr>
+" clear search highlighting
+noremap <leader><space> :noh<cr>
 
-"set t_Co=16
-"colorscheme darkblue
 set t_Co=256
-set background=dark
 colorscheme molokai
 
 " map jf in insert mode to ESC
@@ -49,12 +48,6 @@ vnoremap > >gv
 inoremap <F1> <ESC>
 vnoremap <F1> <ESC>
 nnoremap <F1> <ESC>
-
-" use ctrl-space to complete like ctrl-p and ctrl-n
-inoremap <Nul> <C-n>
-
-" indentation
-filetype indent on
 
 " maps to quickly find unicode characters within the document
 map ,uni :match Error /[^ -~]/<CR>
@@ -74,22 +67,14 @@ set wildmenu
 " turn on line numbers
 nnoremap <F2> :set nonumber!<CR>:set foldcolumn=0<CR>
 
-" load unit test file!
-"nnoremap <F3> :LoadUnitTestFile<CR>
-
-" enable pylint checking (requires pylint.vim plugin in ~/.vim/compiler/
-" By default, this opens a 'Quick Fix' window  with pylint violations every
-" time the buffer is written
-"autocmd FileType python compiler pylint
-"nmap <F5> :Pylint<CR>
-
 " Removes whitespace at the end of a line before saving
 autocmd BufWritePre *.* :%s/\s\+$//e
 " Removes trailing whitespace lines from the end of the file
 autocmd BufWritePre *.py :%s/\($\n\s*\)\+\%$//e
 
 filetype on            " enables filetype detection
-filetype plugin on     " enables filetype specific plugins
+filetype plugin on     " enables filetype-specific plugins
+filetype indent on     " enables filetype-specific indentation
 
 " Folding
 set foldmethod=indent
@@ -131,12 +116,10 @@ let g:syntastic_javascript_checkers=['jslint.vim']
 let g:syntastic_mode_map = { 'mode': 'passive',
                            \ 'active_filetypes': ['python', 'javascript'],
                            \ 'passive_filetypes': [] }
+let g:syntastic_python_flake8_args='--ignore=E501'
 
 " source .vimrc on command
 nnoremap <leader>sv :source $MYVIMRC<cr>
-
-" automatically source .vimrc so don't have to restart vim
-autocmd! bufwritepost .vimrc source $MYVIMRC
 
 " Yaml
 au BufNewFile,BufRead *.yaml,*.yml    setf yaml
@@ -145,3 +128,25 @@ au BufNewFile,BufRead *.yaml,*.yml    setf yaml
 "let g:Powerline_symbols = 'fancy'
 "set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
 set laststatus=2
+
+" vim-airline
+"let g:airline_powerline_fonts=1
+"let g:airline_left_sep=''
+"let g:airline_right_sep=''
+
+" vim-gitgutter
+let g:gitgutter_realtime=0
+let g:gitgutter_eager=0
+
+" vim-youcompleteme
+"let g:ycm_complete_in_comments=0
+"let g:ycm_collect_identifiers_from_comments_and_strings=0
+
+" use ctrl-space to complete like ctrl-p and ctrl-n
+inoremap <Nul> <C-n>
+
+" set encryption method for VimCrypt (':h :X' for more info)
+set cm=blowfish
+
+" automatically source .vimrc so don't have to restart vim
+autocmd! bufwritepost .vimrc source $MYVIMRC

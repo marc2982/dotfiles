@@ -1,0 +1,11 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =9
+let g:netrw_dirhist_1='/home/bryanm3/git/chimera/yycli/chm_compat'
+let g:netrw_dirhist_2='/spgear/zeph_auto/array_aware'
+let g:netrw_dirhist_3='/home/bryanm3/git/chimera_api_tests/testcases/feature/multiSite/mgmt-scalability'
+let g:netrw_dirhist_4='/git/ui/com-emc-vplex-smsv2/target/surefire-reports'
+let g:netrw_dirhist_5='/home/bryanm3/git/chimera/yycli/sms/ds'
+let g:netrw_dirhist_6='/tmp'
+let g:netrw_dirhist_7='/home/bryanm3/git/chimera/.git/hooks'
+let g:netrw_dirhist_8='/home/bryanm3/git/chimera/yycli/docs/_build/html'
+let g:netrw_dirhist_9='/home/bryanm3/git/chimera/chimera_api_tests/testcases/feature/recoverPoint'
