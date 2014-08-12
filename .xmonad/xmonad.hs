@@ -23,6 +23,7 @@ import Data.List (isPrefixOf, isSuffixOf)
 import Data.Maybe (isJust)
 import Data.Monoid (All)
 import qualified Data.Map as M
+import Graphics.X11.ExtraTypes.XF86
 
 main :: IO ()
 main = xmonad myConfig
@@ -74,8 +75,10 @@ font     = "xft:Bitstream Vera Sans Mono-9"
 
 keys :: M.Map (KeyMask, KeySym) (X ())
 keys = M.fromList $
-    [ ((mod4Mask .|. shiftMask, xK_h), sendMessage MirrorShrink)
-    , ((mod4Mask .|. shiftMask, xK_l), sendMessage MirrorExpand)
+    [ ((mod4Mask .|. shiftMask, xK_l), spawn "xautolock -locknow")
+    , ((0                     , xF86XK_AudioLowerVolume), spawn "amixer sset Master 2-")
+    , ((0                     , xF86XK_AudioRaiseVolume), spawn "amixer sset Master 2+")
+    , ((0                     , xF86XK_AudioMute), spawn "amixer set Master toggle")
     ]
     ++
     [((m .|. mod4Mask, key), screenWorkspace sc >>= flip whenJust (windows . f))

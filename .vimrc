@@ -141,12 +141,19 @@ let g:gitgutter_eager=0
 " vim-youcompleteme
 "let g:ycm_complete_in_comments=0
 "let g:ycm_collect_identifiers_from_comments_and_strings=0
+let g:ycm_server_keep_logfiles = 1
+let g:ycm_server_log_level = 'debug'
+let g:ycm_path_to_python_interpreter = '/usr/bin/python'
 
 " use ctrl-space to complete like ctrl-p and ctrl-n
 inoremap <Nul> <C-n>
 
 " set encryption method for VimCrypt (':h :X' for more info)
 set cm=blowfish
+
+" ~/.vim/syntax/python.vim options
+let python_version_2 = 1
+let python_highlight_all = 1
 
 " automatically source .vimrc so don't have to restart vim
 autocmd! bufwritepost .vimrc source $MYVIMRC
