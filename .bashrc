@@ -18,18 +18,12 @@ export TERM=xterm-256color
 alias freecell='sol -v freecell'
 
 alias apacherestart='sudo /etc/init.d/apache2 restart'
-alias deleteClassFiles="find . -name '*py.class' | xargs rm"
 alias fixType="$HOME/Desktop/test.sh; xmodmap -e \"keycode 108 = Alt_R\"; xmodmap $HOME/modmap/modmap"
 alias ls="ls --color"
 alias less="less -R"
-alias nose27='/usr/local/bin/nosetests'
 alias tree="tree -C"
 
 alias vim='vim -w $HOME/.vimlog "$@"'
-
-alias py26="/usr/bin/python2.6"
-alias py27="/usr/bin/python2.7"
-alias py34="/usr/bin/python3.4"
 
 alias ccat='pygmentize -g'
 
@@ -55,10 +49,6 @@ alias st="git status"
 alias log="git log"
 alias gitdiffmeld="git difftool -y -t meld"
 
-function send_key() {
-    ssh $1 "echo $(cat $HOME/.ssh/id_rsa.pub) >> $HOME/.ssh/authorized_keys "
-}
-
 function send_key_and_login() {
     # usage: send_key_and_login service@sms-glados-1
     ssh-copy-id -i $HOME/.ssh/id_rsa.pub "$@"
@@ -75,7 +65,7 @@ function prompt1() {
     local cyan="\[\e[36m\]"
     local white="\[\e[37m\]"
 
-    source $HOME/.git-completion.bash
+    [ -r $HOME/.git-completion.bash ] && . $HOME/.git-completion.bash
     GIT_PS1_SHOWDIRTYSTATE=0
     PS1="$cyan\$(__git_ps1) $red\$(date +%H:%M) $purple\u$white@$green\h$white:$yellow\w$white\$ "
 }
@@ -91,7 +81,7 @@ function prompt_reversed() {
     local cyan="\[\e[36m\]"
     local white="\[\e[37m\]"
 
-    source $HOME/.git-completion.bash
+    [ -r $HOME/.git-completion.bash ] && . $HOME/.git-completion.bash
     GIT_PS1_SHOWDIRTYSTATE=0
     PS1="$black\$(__git_ps1) \$(date +%H:%M) \u@\h:\w\$ "
 }
