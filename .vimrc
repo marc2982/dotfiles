@@ -1,39 +1,53 @@
+" This line should not be removed as it ensures that various options are
+" properly set to work with the Vim-related packages available in Debian.
 runtime! debian.vim
+
 syntax on
-set nocompatible
+
+" -- vim only settings --
+if !has('nvim')
+    set autoindent
+    set backspace=2  " same as ":set backspace=indent,eol,start"
+    set encoding=utf-8
+    set hlsearch
+    set incsearch
+    set laststatus=2  " statusline is always shown
+    set nocompatible  " unlock cool vim stuff
+    set smarttab
+    set t_Co=256  " set number of colours available
+    set vb t_vb= " turn off visual bell
+    set wildmenu
+endif
 
 call pathogen#infect()
 call pathogen#helptags()
-
-set encoding=utf-8
 
 " tabs
 set expandtab
 set tabstop=4
 set shiftwidth=4
 set softtabstop=4
-set smarttab
-set scs " smart search (override ignorecase when pattern has uppers)
-set bs=2
-set vb t_vb= " turn off visual bell
+
 set ignorecase
 set smartcase
-set backspace=eol,start,indent
-set autoindent
 set showmatch " Show matching brackets
+
+set mouse= " disable mouse support
+
+" word wrap
+set wrap
+set textwidth=79
 
 set colorcolumn=80
 
 " searching
-set incsearch
-set hlsearch
+set scs " smart search (override ignorecase when pattern has uppers)
 
 hi Search ctermbg=4
 
 " clear search highlighting
 noremap <leader><space> :noh<cr>
 
-set t_Co=256
 colorscheme molokai
 
 " map jf in insert mode to ESC
@@ -60,12 +74,16 @@ nmap <F6> /[^ -~^I]<CR>
 highlight OverLength ctermfg=0 ctermbg=15 cterm=bold
 match OverLength /\%>121v.\+/
 
-" tab complete bash-like behaviour when opening files
+" tab complete bash-like behaviour when opening files / running vim commands
 set wildmode=longest,list,full
-set wildmenu
 
 " turn on line numbers
 nnoremap <F2> :set nonumber!<CR>:set foldcolumn=0<CR>
+
+" display the syntax highlighting groups for the item under the cursor
+map <F8> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") .
+    \ '> trans<' . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+    \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
 " Removes whitespace at the end of a line before saving
 autocmd BufWritePre *.* :%s/\s\+$//e
@@ -102,32 +120,45 @@ EOL
 
 map <leader>d :py createSphinxDocs()<cr>
 
-" syntastic stuff
+" syntastic stuff -- COMMENTED OUT, REPLACED BY NEOMAKE
 "set statusline+=%#warningmsg#
 "set statusline+=%{SyntasticStatuslineFlag()}
 "set statusline+=%*
-let g:syntastic_error_signs=1
-let g:syntastic_check_on_open=1
-let g:syntastic_check_on_save=1
-let g:syntastic_aggregate_errors=1
-let g:syntastic_always_populate_loc_list=1
-let g:syntastic_python_checkers=['flake8', 'pep257']
-let g:syntastic_javascript_checkers=['jslint.vim']
-let g:syntastic_mode_map = { 'mode': 'passive',
-                           \ 'active_filetypes': ['python', 'javascript'],
-                           \ 'passive_filetypes': [] }
-let g:syntastic_python_flake8_args='--ignore=E501'
+"let g:syntastic_error_signs=1
+"let g:syntastic_check_on_open=1
+"let g:syntastic_check_on_save=1
+"let g:syntastic_aggregate_errors=1
+"let g:syntastic_always_populate_loc_list=1
+"let g:syntastic_python_checkers=['flake8', 'pep257']
+"let g:syntastic_javascript_checkers=['jslint.vim']
+"let g:syntastic_mode_map = { 'mode': 'passive',
+"                           \ 'active_filetypes': ['python', 'javascript'],
+"                           \ 'passive_filetypes': [] }
+"let g:syntastic_python_flake8_args='--ignore=E501'
+
+" neomake stuff
+let g:neomake_python_pydocstyle_maker = {
+    \ 'errorformat': '%E%f:%l%.%#,%C%m',
+    \ 'buffer_output': 1,
+    \ 'ignore': 'D211',
+    \ }
+let g:neomake_python_enabled_makers = ['pylama', 'pydocstyle']
+hi MarcErrMsg ctermfg=0 ctermbg=1
+let g:neomake_error_sign = {'texthl': 'MarcErrMsg'}
+hi MarcWarnMsg ctermfg=0 ctermbg=11
+let g:neomake_warning_sign = {'texthl': 'MarcWarnMsg'}
+autocmd! BufReadPost,FileReadPost,BufWritePost * Neomake
 
 " source .vimrc on command
 nnoremap <leader>sv :source $MYVIMRC<cr>
 
-" Yaml
-au BufNewFile,BufRead *.yaml,*.yml    setf yaml
+" Filetypes
+au BufNewFile,BufRead *.yaml,*.yml    setf yaml  " YAML
+au BufRead,BufNewFile *.tap set filetype=tap     " TAP
 
 " Powerline
 "let g:Powerline_symbols = 'fancy'
 "set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
-set laststatus=2
 
 " vim-airline
 "let g:airline_powerline_fonts=1
@@ -145,15 +176,35 @@ let g:ycm_server_keep_logfiles = 1
 let g:ycm_server_log_level = 'debug'
 let g:ycm_path_to_python_interpreter = '/usr/bin/python'
 
+" vim-tap
+hi begin ctermbg=blue ctermfg=black
+
 " use ctrl-space to complete like ctrl-p and ctrl-n
 inoremap <Nul> <C-n>
 
 " set encryption method for VimCrypt (':h :X' for more info)
-set cm=blowfish
+" set cm=blowfish " commented out for nvim
 
 " ~/.vim/syntax/python.vim options
 let python_version_2 = 1
 let python_highlight_all = 1
+
+" probe
+let g:probe_use_gitignore = 1
+
+" rut
+let g:rut_projects = [{
+    \'pattern': '/vats$',
+    \'test_dir': 'tests',
+    \'source2unit': ['\v.*/vats/(.*)/([^/]*)', '\1/test_\2'],
+    \'unit2source': ['\v.*/tests/(.*)/test_([^/]*)', 'vats/\1/\2'],
+    \'runner': 'nosetests',
+    \'errorformat': '%C %.%#,%A  File "%f"\, line %l%.%#,%Z%[%^ ]%\@=%m',
+\}]
+
+" vim-argwrap
+nnoremap <silent> <leader>a :ArgWrap<CR>
+let g:argwrap_tail_comma = 1
 
 " automatically source .vimrc so don't have to restart vim
 autocmd! bufwritepost .vimrc source $MYVIMRC

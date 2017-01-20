@@ -76,13 +76,13 @@ font     = "xft:Bitstream Vera Sans Mono-9"
 keys :: M.Map (KeyMask, KeySym) (X ())
 keys = M.fromList $
     [ ((mod4Mask .|. shiftMask, xK_l), spawn "xautolock -locknow")
-    , ((0                     , xF86XK_AudioLowerVolume), spawn "amixer sset Master 2-")
-    , ((0                     , xF86XK_AudioRaiseVolume), spawn "amixer sset Master 2+")
-    , ((0                     , xF86XK_AudioMute), spawn "amixer set Master toggle")
+    , ((0                     , xF86XK_AudioLowerVolume), spawn "amixer -D pulse sset Master 5%-")
+    , ((0                     , xF86XK_AudioRaiseVolume), spawn "amixer -D pulse sset Master 5%+")
+    , ((0                     , xF86XK_AudioMute), spawn "amixer -D pulse sset Master 5% toggle")
     ]
     ++
     [((m .|. mod4Mask, key), screenWorkspace sc >>= flip whenJust (windows . f))
-        | (key, sc) <- zip [xK_w, xK_v, xK_z] [0..]
+        | (key, sc) <- zip [xK_w, xK_e, xK_r] [2,1,0]
         , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
 
 mouse :: XConfig Layout -> M.Map (ButtonMask, Button) (Window -> X ())
