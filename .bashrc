@@ -13,6 +13,7 @@ export HISTFILESIZE=10000
 export HISTSIZE=10000
 export LUA_PATH="./?.lua;./lua/?.lua;;"
 export PYTHONSTARTUP=$HOME/.pythonrc
+export PYTHONDONTWRITEBYTECODE=1
 export TERM=xterm-256color
 
 alias freecell='sol -v freecell'
