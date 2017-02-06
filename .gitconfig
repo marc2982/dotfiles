@@ -1,0 +1,19 @@
+[user]
+    name =
+    email =
+[color]
+    ui = auto
+[core]
+    editor = vim
+[alias]
+    hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
+    tracking = rev-parse --symbolic-full-name --abbrev-ref @{u}
+    lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ci)%C(bold blue)<%an>%Creset' --abbrev-commit
+    rbt = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s' --abbrev-commit
+    lgall = log --all --date-order --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --
+    graph = log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short
+    branchname = symbolic-ref --short HEAD
+    msg = log -1 --pretty=%s
+    br = !git for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(align:30,left)%(color:normal)%(refname:short)%(color:reset)%(end) %(color:normal dim)%(objectname:short)%(color:reset) %(color:green)(%(committerdate:relative))%(color:reset)'
+[log]
+    decorate = true
