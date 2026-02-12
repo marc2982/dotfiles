@@ -93,18 +93,18 @@ for file in ~/.zshrc ~/.bashrc ~/.bash_profile ~/.gitconfig ~/.gitignore_global 
 done
 
 # Backup existing config directories
-for dir in ~/.config/nvim ~/.config/atuin; do
+for dir in ~/.config/nvim ~/.config/atuin ~/.config/tmux-powerline; do
     [[ -d "$dir" ]] && mv "$dir" "${dir}.backup"
 done
 
 # Create symlinks
-stow shell tmux nvim atuin
+stow -t ~ shell tmux nvim atuin
 
 # Verify symlinks
-ls -la ~/.zshrc ~/.tmux.conf ~/.config/nvim
+ls -la ~/.zshrc ~/.tmux.conf ~/.config/nvim ~/.config/atuin
 ```
 
-### 5. Install Tmux Plugin Manager (TPM)
+### 6. Install Tmux Plugin Manager (TPM)
 
 ```bash
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
@@ -114,7 +114,7 @@ tmux
 # Press prefix (Ctrl-s) + I to install plugins
 ```
 
-### 6. Neovim Plugins
+### 7. Neovim Plugins
 
 Neovim plugins will auto-install on first launch via lazy.nvim:
 
