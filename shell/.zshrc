@@ -58,6 +58,8 @@ alias ls="ls --color"
 alias less="less -R"
 alias tree="tree -C"
 alias o="xdg-open"
+alias clip="wl-copy"
+alias clippaste="wl-paste"
 
 # nvim
 alias vim="nvim"
