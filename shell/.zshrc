@@ -31,11 +31,10 @@ bindkey  "^[[3~"   delete-char
 bindkey  "[[1;3D"  backward-word
 bindkey  "[[1;3C"  forward-word
 
-# TODO look into these
-# setopt beep extendedglob nomatch notify
-# unsetopt autocd
-# bindkey -v
-# zstyle :compinstall filename '/home/marc/.zshrc'
+# Shell options
+setopt extendedglob    # Advanced glob patterns (**, ^, etc.)
+setopt notify          # Immediate background job notifications
+bindkey -v             # Vi mode for command line editing
 
 # History
 HISTFILE=~/.zsh_history
