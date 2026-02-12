@@ -345,6 +345,25 @@ setup_auto_backup() {
 	fi
 }
 
+install_peon_ping() {
+	print_step "9/10" "Installing peon-ping"
+
+	if check_command "peon"; then
+		print_success "peon-ping already installed"
+	else
+		if prompt_yes_no "    Install peon-ping?" "y"; then
+			print_info "Installing peon-ping..."
+			if run_as_user bash -c 'curl -fsSL https://raw.githubusercontent.com/PeonPing/peon-ping/main/install.sh | bash' 2>&1 | tee -a "$LOG_FILE"; then
+				print_success "peon-ping installed"
+			else
+				print_error "Failed to install peon-ping"
+			fi
+		else
+			print_info "Skipped peon-ping installation"
+		fi
+	fi
+}
+
 print_next_steps() {
 	cat <<EOF
 
@@ -391,6 +410,7 @@ main() {
 	run_stow
 	install_tpm
 	setup_auto_backup
+	install_peon_ping
 	print_next_steps
 }
 

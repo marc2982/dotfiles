@@ -124,3 +124,7 @@ source /usr/share/autojump/autojump.zsh
 
 # Load work-specific config (not tracked in dotfiles)
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
+
+# peon-ping quick controls
+alias peon="bash /home/marc/.claude/hooks/peon-ping/peon.sh"
+[ -f /home/marc/.claude/hooks/peon-ping/completions.bash ] && source /home/marc/.claude/hooks/peon-ping/completions.bash

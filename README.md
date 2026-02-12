@@ -38,6 +38,7 @@ The script will:
 - Create symlinks with stow
 - Install Tmux Plugin Manager (TPM)
 - Optionally set up automatic nightly backups
+- Install peon-ping (Claude Code sound notifications)
 
 See the "Manual Setup" section below for detailed step-by-step instructions.
 
@@ -158,6 +159,14 @@ Neovim plugins will auto-install on first launch via lazy.nvim:
 ```bash
 nvim
 # Wait for plugins to install
+```
+
+### 8. Install peon-ping
+
+peon-ping provides sound notifications for Claude Code events:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/PeonPing/peon-ping/main/install.sh | bash
 ```
 
 ## Usage
