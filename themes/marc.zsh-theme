@@ -12,8 +12,8 @@ function prompt_user_host() {
 }
 
 # Git prompt style from simple theme
-ZSH_THEME_GIT_PROMPT_PREFIX=" %{$fg_bold[blue]%}("
-ZSH_THEME_GIT_PROMPT_SUFFIX="%{$fg_bold[blue]%})"
+ZSH_THEME_GIT_PROMPT_PREFIX=" %{$fg[cyan]%}("
+ZSH_THEME_GIT_PROMPT_SUFFIX="%{$fg[cyan]%})"
 ZSH_THEME_GIT_PROMPT_DIRTY=" %{$fg[red]%}✗"
 ZSH_THEME_GIT_PROMPT_CLEAN=" %{$fg[green]%}✔"
 

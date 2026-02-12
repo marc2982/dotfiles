@@ -34,7 +34,9 @@ bindkey  "[[1;3C"  forward-word
 # Shell options
 setopt extendedglob    # Advanced glob patterns (**, ^, etc.)
 setopt notify          # Immediate background job notifications
-bindkey -v             # Vi mode for command line editing
+
+# Git: disable pager for commands (write directly to terminal)
+export GIT_PAGER=cat
 
 # History
 HISTFILE=~/.zsh_history
