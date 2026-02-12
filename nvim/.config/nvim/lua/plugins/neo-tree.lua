@@ -2,7 +2,8 @@ return {
   "nvim-neo-tree/neo-tree.nvim",
   opts = {
     filesystem = {
-      hijack_netrw_behavior = "open_current",
+      -- Set to "open_current" to automatically open neo-tree when opening files
+      hijack_netrw_behavior = "disabled",
       filtered_items = {
         hide_dotfiles = false,
         hide_gitignored = false,

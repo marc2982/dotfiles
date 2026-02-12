@@ -20,22 +20,23 @@ vim.cmd([[highlight OverLength ctermfg=0 ctermbg=15 cterm=bold]])
 vim.fn.matchadd("OverLength", [[\%>121v.\+]])
 
 -- Auto-open neo-tree on startup (but not on dashboard)
-vim.api.nvim_create_autocmd("VimEnter", {
-  callback = function()
-    -- Don't open if we're on the dashboard or no arguments
-    if vim.fn.argc() == 0 then
-      return
-    end
-
-    -- Defer to allow plugins to load
-    vim.schedule(function()
-      -- Check if Neotree command exists before calling it
-      if vim.fn.exists(":Neotree") == 2 then
-        vim.cmd("Neotree show")
-      end
-    end)
-  end,
-})
+-- Uncomment to re-enable auto-opening neo-tree when opening files
+-- vim.api.nvim_create_autocmd("VimEnter", {
+--   callback = function()
+--     -- Don't open if we're on the dashboard or no arguments
+--     if vim.fn.argc() == 0 then
+--       return
+--     end
+--
+--     -- Defer to allow plugins to load
+--     vim.schedule(function()
+--       -- Check if Neotree command exists before calling it
+--       if vim.fn.exists(":Neotree") == 2 then
+--         vim.cmd("Neotree show")
+--       end
+--     end)
+--   end,
+-- })
 
 -- Disable LazyVim's aggressive whitespace trimming (ws-butler handles this better)
 vim.api.nvim_create_autocmd("User", {
