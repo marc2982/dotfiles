@@ -33,8 +33,9 @@ cd ~/git/dotfiles
 
 ### 3. Set Up Secrets
 
-These files contain sensitive tokens and are NOT in the repository:
+These files contain sensitive information and are NOT in the repository:
 
+#### Tokens
 ```bash
 # Create tokens directory
 mkdir -p ~/.tokens
@@ -70,6 +71,7 @@ vim ~/.zshrc.local
 ```
 
 The `.zshrc` sources `.zshrc.local` for work-specific aliases, functions, and configurations.
+
 
 ### 4. Install oh-my-zsh and Custom Theme
 

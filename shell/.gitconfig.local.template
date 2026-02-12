@@ -1,0 +1,14 @@
+# Local git configuration (not tracked in dotfiles)
+# Copy this file to ~/.gitconfig.local and fill in your information
+
+[user]
+    name = YOUR_NAME
+    email = YOUR_EMAIL
+
+# Work-specific URL rewrites
+# [url "git@gitlab.com:company"]
+#     insteadOf = https://gitlab.com/company
+
+# Tool-specific settings
+# [coderabbit]
+#     machineId = YOUR_MACHINE_ID

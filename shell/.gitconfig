@@ -1,13 +1,8 @@
-[url "git@gitlab.com:synctera"]
-	insteadOf = https://gitlab.com/synctera
-[user]
-	name = Marc Bryan
-	email = marc@synctera.com
 [color]
     ui = auto
 [core]
     editor = nvim
-	excludesfile = /home/marc/.gitignore_global
+	excludesfile = ~/.gitignore_global
 [alias]
     hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
     tracking = rev-parse --symbolic-full-name --abbrev-ref @{u}
@@ -23,5 +18,8 @@
     decorate = true
 [pull]
 	rebase = true
-[coderabbit]
-	machineId = cli/3d030d3eb5a04f70bf3739a87cec57f1
+
+# Include local settings (name, email, work-specific config)
+# Create ~/.gitconfig.local with your personal information
+[include]
+    path = ~/.gitconfig.local
