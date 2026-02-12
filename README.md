@@ -21,13 +21,14 @@ git clone <your-repo-url> ~/git/dotfiles
 cd ~/git/dotfiles
 
 # Run with sudo to auto-install dependencies
-sudo ./setup-new-workspace.sh
+yes | sudo ./setup-new-workspace.sh
 
 # Or run without sudo (will prompt for missing dependencies)
 ./setup-new-workspace.sh
 ```
 
 The script will:
+
 - Install required dependencies (stow, git, zsh, tmux, nvim, atuin, autojump)
 - Create `~/.tokens/` directory
 - Set up `.gitconfig.local` and `.zshrc.local` from templates
@@ -68,6 +69,7 @@ cd ~/git/dotfiles
 These files contain sensitive information and are NOT in the repository:
 
 #### Tokens
+
 ```bash
 # Create tokens directory
 mkdir -p ~/.tokens
@@ -83,6 +85,7 @@ chmod 600 ~/.tokens/*
 The `.zshrc` will automatically load these tokens if they exist.
 
 #### Git Personal Config
+
 ```bash
 # Create local git config with your personal information
 cp ~/git/dotfiles/shell/.gitconfig.local.template ~/.gitconfig.local
@@ -94,6 +97,7 @@ vim ~/.gitconfig.local
 The `.gitconfig` includes `.gitconfig.local` for your name, email, and work-specific settings.
 
 #### Work-Specific Shell Config
+
 ```bash
 # Create local zsh config with work-specific aliases and functions
 cp ~/git/dotfiles/shell/.zshrc.local.template ~/.zshrc.local
@@ -103,7 +107,6 @@ vim ~/.zshrc.local
 ```
 
 The `.zshrc` sources `.zshrc.local` for work-specific aliases, functions, and configurations.
-
 
 ### 4. Install oh-my-zsh and Custom Theme
 
@@ -231,13 +234,14 @@ stow -R shell
 
 Custom powerline theme located at `tmux/.config/tmux-powerline/themes/marc.sh`.
 
-The `tmux-git-autofetch` segment is configured for `~/git/synctera/*` - adjust if needed.
+The `tmux-git-autofetch` segment is configured for `~/git/<company>/*` - adjust if needed.
 
 ### Atuin
 
 Atuin stores encryption keys in `~/.local/share/atuin/` which is NOT backed up.
 
 To sync history across machines, you'll need to:
+
 1. Back up the key manually
 2. Or re-login to atuin on each machine
 
