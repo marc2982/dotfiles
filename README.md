@@ -11,6 +11,41 @@ Personal configuration files managed with GNU Stow.
 
 ## Setup on New Machine
 
+### Quick Start (Automated)
+
+For a fully automated setup, run the setup script:
+
+```bash
+# Clone the repository
+git clone <your-repo-url> ~/git/dotfiles
+cd ~/git/dotfiles
+
+# Run with sudo to auto-install dependencies
+sudo ./setup-new-workspace.sh
+
+# Or run without sudo (will prompt for missing dependencies)
+./setup-new-workspace.sh
+```
+
+The script will:
+- Install required dependencies (stow, git, zsh, tmux, nvim, atuin, autojump)
+- Create `~/.tokens/` directory
+- Set up `.gitconfig.local` and `.zshrc.local` from templates
+- Install oh-my-zsh and custom theme
+- Install zsh-autosuggestions plugin
+- Backup existing configs
+- Create symlinks with stow
+- Install Tmux Plugin Manager (TPM)
+- Optionally set up automatic nightly backups
+
+See the "Manual Setup" section below for detailed step-by-step instructions.
+
+---
+
+### Manual Setup
+
+If you prefer to set up manually or need to understand each step:
+
 ### 1. Install Dependencies
 
 ```bash

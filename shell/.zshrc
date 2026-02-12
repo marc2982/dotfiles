@@ -77,6 +77,10 @@ alias st="git status"
 export DOTFILES_DIR="$HOME/git/dotfiles"
 alias dotfiles='cd "$DOTFILES_DIR"'
 
+# Unalias in case these were previously defined as aliases
+unalias dotfiles-sync 2>/dev/null
+unalias dotfiles-status 2>/dev/null
+
 dotfiles-sync() {
     pushd "$DOTFILES_DIR" > /dev/null || return 1
     git add -A

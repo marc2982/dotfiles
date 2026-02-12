@@ -1,0 +1,27 @@
+# Dockerfile for testing setup-new-workspace.sh in a clean Fedora environment
+#
+# Build and run:
+#   docker build -f Dockerfile.test -t dotfiles-test .
+#   docker run --rm -it dotfiles-test bash
+#   yes | sudo ./setup-new-workspace.sh
+#
+# Test idempotency (run twice):
+#   docker run --rm dotfiles-test bash -c "yes | sudo ./setup-new-workspace.sh && yes | sudo ./setup-new-workspace.sh"
+
+FROM fedora:latest
+
+# Install sudo for the test
+RUN dnf install -y sudo
+
+# Create a test user
+RUN useradd -m -s /bin/bash testuser && \
+    echo "testuser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+# Copy dotfiles to test user's home
+COPY . /home/testuser/git/dotfiles
+RUN chown -R testuser:testuser /home/testuser/git
+
+USER testuser
+WORKDIR /home/testuser/git/dotfiles
+
+CMD ["/bin/bash"]
