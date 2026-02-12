@@ -3,7 +3,7 @@
 
 set -e
 
-THEME_SOURCE="$HOME/git/dotfiles/archive/marc.zsh-theme"
+THEME_SOURCE="$HOME/git/dotfiles/themes/marc.zsh-theme"
 THEME_DEST="$HOME/.oh-my-zsh/custom/themes/marc.zsh-theme"
 
 if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
