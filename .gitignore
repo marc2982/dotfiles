@@ -1,0 +1,37 @@
+# Secrets
+**/tokens/**
+**/*token*
+**/*password*
+**/*secret*
+**/.env
+**/.env.*
+.git-credentials
+
+# Local git config with personal information
+**/.gitconfig.local
+
+# Local zsh config with work-specific aliases/functions
+**/.zshrc.local
+
+
+# SSH keys
+**/.ssh/
+
+# Atuin sensitive data
+**/.local/share/atuin/
+
+# Backup files
+*.bak
+*~
+*.swp
+*.swo
+
+# Neovim undo files
+**/undo/
+
+# Node modules
+**/node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,20 @@
+# Work-specific zsh configuration (not tracked in dotfiles)
+# Copy this file to ~/.zshrc.local and customize for your workplace
+
+# Example: Auto-configure git hooks for work repos
+# function git() {
+#     command git "$@"
+#     local retval=$?
+#     if [[ $retval -eq 0 && "$1" == "clone" ]]; then
+#         # Add your git clone hook logic here
+#     fi
+#     return $retval
+# }
+
+# Example: Work-specific aliases
+# alias mrquick='glab mr create --fill --assignee YOUR_USERNAME ...'
+
+# Example: Work-specific functions
+# function work-function() {
+#     # Your work-specific logic
+# }
