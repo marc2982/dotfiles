@@ -35,8 +35,8 @@ bindkey  "[[1;3C"  forward-word
 setopt extendedglob    # Advanced glob patterns (**, ^, etc.)
 setopt notify          # Immediate background job notifications
 
-# Git: disable pager for commands (write directly to terminal)
-export GIT_PAGER=cat
+# Git: use pager with scrolling that leaves output in terminal after exit
+export GIT_PAGER="less -FRX"
 
 # History
 HISTFILE=~/.zsh_history
