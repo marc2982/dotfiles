@@ -125,7 +125,7 @@ cd ~/git/dotfiles
 cd ~/git/dotfiles
 
 # Backup existing configs if any
-for file in ~/.zshrc ~/.bashrc ~/.bash_profile ~/.gitconfig ~/.gitignore_global ~/.tmux.conf; do
+for file in ~/.zshrc ~/.gitconfig ~/.gitignore_global ~/.tmux.conf; do
     [[ -f "$file" ]] && mv "$file" "${file}.backup"
 done
 

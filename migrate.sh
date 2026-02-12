@@ -9,8 +9,6 @@ cd "$DOTFILES"
 
 echo "📦 Copying shell configs..."
 cp ~/.zshrc shell/.zshrc
-cp ~/.bashrc shell/.bashrc
-cp ~/.bash_profile shell/.bash_profile
 cp ~/.gitconfig shell/.gitconfig
 cp ~/.gitignore_global shell/.gitignore_global
 
@@ -37,7 +35,7 @@ echo "3. Commit changes: git add -A && git commit -m 'Initial dotfiles setup'"
 echo "4. Push to remote: git push"
 echo ""
 echo "Then to activate symlinks:"
-echo "5. Backup originals: cd ~ && for f in .zshrc .bashrc .bash_profile .gitconfig .gitignore_global .tmux.conf; do [[ -f \$f ]] && mv \$f \${f}.backup; done"
+echo "5. Backup originals: cd ~ && for f in .zshrc .gitconfig .gitignore_global .tmux.conf; do [[ -f \$f ]] && mv \$f \${f}.backup; done"
 echo "6. Backup config dirs: for d in .config/nvim .config/atuin .config/tmux-powerline; do [[ -d \$d ]] && mv \$d \${d}.backup; done"
 echo "7. Stow configs: cd $DOTFILES && stow shell tmux nvim atuin"
 echo "8. Verify: ls -la ~/.zshrc ~/.tmux.conf ~/.config/nvim"
