@@ -19,9 +19,6 @@ sudo dnf install stow
 
 # Debian/Ubuntu
 sudo apt install stow
-
-# macOS
-brew install stow
 ```
 
 ### 2. Clone Repository
@@ -143,14 +140,39 @@ git commit -m "Update zsh config"
 git push
 ```
 
-### Helpful Aliases
+### Helpful Aliases and Functions
 
-Add these to your `.zshrc` (already included):
+The following are included in `.zshrc`:
 
 ```bash
-alias dotfiles='cd ~/git/dotfiles'
-alias dotfiles-sync='cd ~/git/dotfiles && git add -A && git commit -m "Update dotfiles $(date +%Y-%m-%d)" && git push && cd -'
-alias dotfiles-status='cd ~/git/dotfiles && git status && cd -'
+dotfiles           # cd to dotfiles directory
+dotfiles-sync      # commit and push changes (safe if nothing to commit)
+dotfiles-status    # show git status
+```
+
+### Automatic Backup
+
+To automatically backup your dotfiles nightly at 2 AM:
+
+```bash
+cd ~/git/dotfiles
+./setup-auto-backup.sh
+```
+
+This installs a cronjob that runs `backup-dotfiles.sh` daily. The script only commits and pushes if there are changes.
+
+To manually run a backup at any time:
+
+```bash
+~/git/dotfiles/backup-dotfiles.sh
+# or use the function:
+dotfiles-sync
+```
+
+View backup logs:
+
+```bash
+tail -f /tmp/dotfiles-backup.log
 ```
 
 ### Managing Packages
@@ -169,16 +191,6 @@ stow -R shell
 ```
 
 ## Important Notes
-
-### Platform-Specific Paths
-
-Some configs have platform-specific paths. The `.zshrc` handles this with conditionals:
-
-```bash
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS specific
-fi
-```
 
 ### Tmux Powerline
 

@@ -74,9 +74,25 @@ alias can="git commit -v -a --amend --no-edit"
 alias st="git status"
 
 # Dotfiles management
-alias dotfiles='cd ~/git/dotfiles'
-alias dotfiles-sync='cd ~/git/dotfiles && git add -A && git commit -m "Update dotfiles $(date +%Y-%m-%d)" && git push && cd -'
-alias dotfiles-status='cd ~/git/dotfiles && git status && cd -'
+export DOTFILES_DIR="$HOME/git/dotfiles"
+alias dotfiles='cd "$DOTFILES_DIR"'
+
+dotfiles-sync() {
+    pushd "$DOTFILES_DIR" > /dev/null || return 1
+    git add -A
+    if git commit -m "Update dotfiles $(date +%Y-%m-%d)"; then
+        git push
+    else
+        echo "No changes to commit"
+    fi
+    popd > /dev/null
+}
+
+dotfiles-status() {
+    pushd "$DOTFILES_DIR" > /dev/null || return 1
+    git status
+    popd > /dev/null
+}
 
 function mkcd() {
     mkdir -p "$@"
