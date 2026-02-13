@@ -82,20 +82,19 @@ unalias dotfiles-sync 2>/dev/null
 unalias dotfiles-status 2>/dev/null
 
 dotfiles-sync() {
-    pushd "$DOTFILES_DIR" > /dev/null || return 1
-    git add -A
-    if git commit -m "Update dotfiles $(date +%Y-%m-%d)"; then
-        git push
-    else
-        echo "No changes to commit"
-    fi
-    popd > /dev/null
+    (
+        cd "$DOTFILES_DIR" || return 1
+        git add -A
+        if git commit -m "Update dotfiles $(date +%Y-%m-%d)"; then
+            git push
+        else
+            echo "No changes to commit"
+        fi
+    )
 }
 
 dotfiles-status() {
-    pushd "$DOTFILES_DIR" > /dev/null || return 1
-    git status
-    popd > /dev/null
+    (cd "$DOTFILES_DIR" && git status)
 }
 
 function mkcd() {

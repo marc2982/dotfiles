@@ -6,14 +6,20 @@
 [alias]
     hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
     tracking = rev-parse --symbolic-full-name --abbrev-ref @{u}
-    lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ci)%C(bold blue)<%an>%Creset' --abbrev-commit --max-count 10
-    lglong = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ci)%C(bold blue)<%an>%Creset' --abbrev-commit
+    lgbase = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%ci)%C(bold blue)<%an>%Creset' --abbrev-commit
+    lg = !git lgbase --max-count 10
+    lglong = !git lgbase
+    lgdiverge = !git lgbase HEAD @{u} --not $(git merge-base HEAD @{u})^
+    lgdivergelr = !git lgbase --left-right --boundary HEAD...@{u}
     lgall = log --all --date-order --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --
     rbt = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s' --abbrev-commit
     graph = log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short
     branchname = symbolic-ref --short HEAD
     msg = log -1 --pretty=%s
     br = !git for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(align:30,left)%(color:normal)%(refname:short)%(color:reset)%(end) %(color:normal dim)%(objectname:short)%(color:reset) %(color:green)(%(committerdate:relative))%(color:reset)'
+    cleanup = !git branch --merged | grep -v '\\*\\|main\\|master\\|develop' | xargs -r git branch -d
+    aliases = config --get-regexp alias
+    last = log -1 HEAD --stat
 [log]
     decorate = true
 [pull]
