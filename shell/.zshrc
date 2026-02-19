@@ -50,8 +50,31 @@ setopt HIST_IGNORE_SPACE
 autoload -Uz compinit && compinit
 zstyle ':completion:*' menu select
 
-bindkey '^P' history-beginning-search-backward
-bindkey '^N' history-beginning-search-forward
+# Custom Ctrl-P: accept suggestion if text exists, otherwise navigate history
+_custom_ctrl_p() {
+    if [[ ${#BUFFER} -gt 0 ]]; then
+        # Text exists: accept autosuggestion if available
+        if (( $+functions[_zsh_autosuggest_accept] )); then
+            zle autosuggest-accept
+        fi
+    else
+        # Empty line: navigate up in history
+        zle up-history
+    fi
+}
+zle -N _custom_ctrl_p
+bindkey '^P' _custom_ctrl_p
+
+# Custom Ctrl-N: navigate down in history
+_custom_ctrl_n() {
+    if [[ ${#BUFFER} -eq 0 ]]; then
+        zle down-history
+    else
+        zle history-beginning-search-forward
+    fi
+}
+zle -N _custom_ctrl_n
+bindkey '^N' _custom_ctrl_n
 
 # aliases
 alias ls="ls --color"
@@ -72,6 +95,124 @@ alias co="git commit -v -a"
 alias ca="git commit -v -a --amend"
 alias can="git commit -v -a --amend --no-edit"
 alias st="git status"
+
+# Helper: outputs "short_hash|full_hash|commit_msg|file" per dirty file
+# Groups: branch-local commits, UPSTREAM, or NEW
+_git-last-touch-data() {
+    local upstream_branch=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/@@')
+    if [ -z "$upstream_branch" ]; then
+        upstream_branch="origin/main"
+    fi
+
+    local branch_commits=$(git log --pretty=format:"%H" $upstream_branch..HEAD 2>/dev/null)
+
+    git status --porcelain | while IFS= read -r line; do
+        file="${line:3}"
+        commit_hash=$(git log -1 --pretty=format:"%h" -- "$file" 2>/dev/null)
+        commit_hash_full=$(git log -1 --pretty=format:"%H" -- "$file" 2>/dev/null)
+
+        if [ -n "$commit_hash" ]; then
+            if echo "$branch_commits" | grep -q "^$commit_hash_full$"; then
+                commit_msg=$(git log -1 --pretty=format:"%h %s" "$commit_hash")
+                echo "$commit_hash|$commit_hash_full|$commit_msg|$file"
+            else
+                commit_msg=$(git log -1 --pretty=format:"%h %s" "$commit_hash")
+                echo "UPSTREAM|UPSTREAM|⚠️  $commit_msg (UPSTREAM - do not amend)|$file"
+            fi
+        else
+            echo "NEW|NEW|(new file)|$file"
+        fi
+    done | sort
+}
+
+# Show which commit last touched each dirty file (grouped by commit)
+# Only shows commits on current branch (safe to amend)
+git-last-touch() {
+    echo "Dirty files grouped by last commit (current branch only):"
+    echo "=========================================================="
+
+    _git-last-touch-data | awk -F'|' '
+        BEGIN { prev_commit = "" }
+        {
+            commit = $1
+            commit_msg = $3
+            file = $4
+
+            if (commit != prev_commit) {
+                if (prev_commit != "") print ""
+                print "\n" commit_msg ":"
+                prev_commit = commit
+            }
+            print "  • " file
+        }
+    '
+}
+
+# Like git-last-touch, but creates fixup! commits for each group
+git-last-touch-fixup() {
+    echo "Dirty files grouped by last commit (current branch only):"
+    echo "=========================================================="
+
+    local data=$(_git-last-touch-data)
+
+    # Display the same output as git-last-touch
+    echo "$data" | awk -F'|' '
+        BEGIN { prev_commit = "" }
+        {
+            commit = $1
+            commit_msg = $3
+            file = $4
+
+            if (commit != prev_commit) {
+                if (prev_commit != "") print ""
+                print "\n" commit_msg ":"
+                prev_commit = commit
+            }
+            print "  • " file
+        }
+    '
+
+    echo ""
+    echo "=========================================================="
+    echo "Creating fixup commits..."
+    echo ""
+
+    local prev_hash=""
+    local files=()
+    local skipped=()
+
+    # Process each line, grouping files by commit hash
+    while IFS='|' read -r short_hash full_hash commit_msg file; do
+        if [[ "$short_hash" == "UPSTREAM" || "$short_hash" == "NEW" ]]; then
+            skipped+=("$file")
+            continue
+        fi
+
+        # When we hit a new commit group, flush the previous group
+        if [[ -n "$prev_hash" && "$full_hash" != "$prev_hash" ]]; then
+            git add -- "${files[@]}"
+            git commit --fixup="$prev_hash"
+            files=()
+        fi
+
+        prev_hash="$full_hash"
+        files+=("$file")
+    done <<< "$data"
+
+    # Flush the last group
+    if [[ -n "$prev_hash" && ${#files[@]} -gt 0 ]]; then
+        git add -- "${files[@]}"
+        git commit --fixup="$prev_hash"
+    fi
+
+    if [[ ${#skipped[@]} -gt 0 ]]; then
+        echo ""
+        echo "Skipped (upstream/new - no branch commit to fixup):"
+        for f in "${skipped[@]}"; do
+            echo "  • $f"
+        done
+    fi
+}
 
 # Dotfiles management
 export DOTFILES_DIR="$HOME/git/dotfiles"
