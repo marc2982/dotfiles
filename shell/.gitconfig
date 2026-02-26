@@ -20,6 +20,7 @@
     cleanup = !git branch --merged | grep -v '\\*\\|main\\|master\\|develop' | xargs -r git branch -d
     aliases = config --get-regexp alias
     last = log -1 HEAD --stat
+	new = !git checkout --track -b
 [log]
     decorate = true
 [pull]

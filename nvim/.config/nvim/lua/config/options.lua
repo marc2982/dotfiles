@@ -15,3 +15,4 @@ vim.opt.colorcolumn = "128" -- visual guide at 128 characters
 
 vim.opt.swapfile = false
 vim.opt.autoread = true
+vim.opt.fileformats = "unix,dos"
