@@ -238,6 +238,10 @@ dotfiles-status() {
     (cd "$DOTFILES_DIR" && git status)
 }
 
+dotfiles-diff() {
+    (cd "$DOTFILES_DIR" && git diff)
+}
+
 function mkcd() {
     mkdir -p "$@"
     cd "$@"

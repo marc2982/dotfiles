@@ -21,6 +21,7 @@
     aliases = config --get-regexp alias
     last = log -1 HEAD --stat
 	new = !git checkout --track -b
+	pfwl = !git push origin HEAD:$(git branchname) --force-with-lease
 [log]
     decorate = true
 [pull]
