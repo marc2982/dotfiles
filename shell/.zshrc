@@ -272,3 +272,6 @@ source /usr/share/autojump/autojump.zsh
 # peon-ping quick controls
 alias peon="bash /home/marc/.claude/hooks/peon-ping/peon.sh"
 [ -f /home/marc/.claude/hooks/peon-ping/completions.bash ] && source /home/marc/.claude/hooks/peon-ping/completions.bash
+
+# opencode
+export PATH=/home/marc/.opencode/bin:$PATH

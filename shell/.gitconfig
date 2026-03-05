@@ -11,6 +11,8 @@
     lglong = !git lgbase
     lgdiverge = !git lgbase HEAD @{u} --not $(git merge-base HEAD @{u})^
     lgdivergelr = !git lgbase --left-right --boundary HEAD...@{u}
+    lgremote = !git lgbase HEAD origin/$(git branchname) --not $(git merge-base HEAD origin/$(git branchname))^
+    lgme = !git lgbase --author=\"$(git config user.email)\"
     lgall = log --all --date-order --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --
     rbt = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s' --abbrev-commit
     graph = log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short
@@ -20,7 +22,7 @@
     cleanup = !git branch --merged | grep -v '\\*\\|main\\|master\\|develop' | xargs -r git branch -d
     aliases = config --get-regexp alias
     last = log -1 HEAD --stat
-	new = !git checkout --track -b
+	new = "!f() { base=\"${2:-origin/main}\"; [ \"$base\" = \".\" ] && base=\"$(git symbolic-ref --short HEAD)\"; git checkout --track -b \"$1\" \"$base\"; }; f"
 	pfwl = !git push origin HEAD:$(git branchname) --force-with-lease
 [log]
     decorate = true
