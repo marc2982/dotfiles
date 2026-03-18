@@ -14,6 +14,7 @@
     lgremote = !git lgbase HEAD origin/$(git branchname) --not $(git merge-base HEAD origin/$(git branchname))^
     lgme = !git lgbase --author=\"$(git config user.email)\"
     lgall = log --all --date-order --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --
+    diffremote = !git diff origin/$(git branchname)..HEAD
     rbt = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s' --abbrev-commit
     graph = log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short
     branchname = symbolic-ref --short HEAD
@@ -24,6 +25,8 @@
     last = log -1 HEAD --stat
 	new = "!f() { base=\"${2:-origin/main}\"; [ \"$base\" = \".\" ] && base=\"$(git symbolic-ref --short HEAD)\"; git checkout --track -b \"$1\" \"$base\"; }; f"
 	pfwl = !git push origin HEAD:$(git branchname) --force-with-lease
+	setup-bare = !git config remote.origin.fetch \"+refs/heads/*:refs/remotes/origin/*\" && git fetch origin
+	wt = "!f() { name=\"$1\"; base=\"${2:-origin/main}\"; git worktree add --track -b \"$name\" \"$name\" \"$base\"; cd \"$name\"; }; f"
 [log]
     decorate = true
 [pull]
