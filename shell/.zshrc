@@ -1,3 +1,6 @@
+# Deduplicate PATH entries
+typeset -U PATH
+
 # Google Cloud SDK
 if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
 if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
@@ -15,6 +18,7 @@ if [[ ! -f "$gitlab_token" ]]; then
     echo "Warning: $gitlab_token not found"
 fi
 export GITLAB_TOKEN=$(cat $gitlab_token 2>/dev/null)
+export PERTMUX_GITLAB_TOKEN=$(cat $gitlab_token 2>/dev/null)
 
 export VOLTA_HOME="$HOME/.volta"
 export PATH="$VOLTA_HOME/bin:$PATH"
@@ -273,5 +277,14 @@ source /usr/share/autojump/autojump.zsh
 alias peon="bash /home/marc/.claude/hooks/peon-ping/peon.sh"
 [ -f /home/marc/.claude/hooks/peon-ping/completions.bash ] && source /home/marc/.claude/hooks/peon-ping/completions.bash
 
+# memory check
+memhogs() {
+  free -h | awk '/^Mem:/{printf "RAM:  %s used / %s total (%s available, %s free + %s buff/cache)\n",$3,$2,$7,$4,$6} /^Swap:/{printf "Swap: %s used / %s total (%s free)\n",$3,$2,$4}'
+  echo ""
+  ps aux --sort=-%mem | awk 'NR==1{printf "%-7s %-7s %s\n","MEM%","USER","COMMAND"} NR>1&&NR<=4{printf "%-7s %-7s %s\n",$4"%",$1,$11}'
+}
+
 # opencode
 export PATH=/home/marc/.opencode/bin:$PATH
+# cargo
+source "$HOME/.cargo/env"
