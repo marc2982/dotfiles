@@ -26,7 +26,7 @@
 	new = "!f() { base=\"${2:-origin/main}\"; [ \"$base\" = \".\" ] && base=\"$(git symbolic-ref --short HEAD)\"; git checkout --track -b \"$1\" \"$base\"; }; f"
 	pfwl = !git push origin HEAD:$(git branchname) --force-with-lease
 	setup-bare = !git config remote.origin.fetch \"+refs/heads/*:refs/remotes/origin/*\" && git fetch origin
-	wt = "!f() { name=\"$1\"; base=\"${2:-origin/main}\"; git worktree add --track -b \"$name\" \"$name\" \"$base\"; cd \"$name\"; }; f"
+	wt = "!f() { name=\"$1\"; base=\"${2:-origin/main}\"; git worktree add --track -b \"$name\" \"$name\" \"$base\"; }; f"
 [log]
     decorate = true
 [pull]
