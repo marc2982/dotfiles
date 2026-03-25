@@ -286,11 +286,13 @@ memhogs() {
 
 # opencode
 export PATH=/home/marc/.opencode/bin:$PATH
-alias opencode='command opencode --port 0' # run on port 0 for pertmux support
+unalias opencode 2&> /dev/null
+# run opencode on port 0 for pertmux support but dont add port for opencode commands (like auth)
+opencode() { if [ $# -eq 0 ]; then command opencode --port 0; else command opencode "$@"; fi; }
 
 # cargo
 source "$HOME/.cargo/env"
 
 # override oh-my-zsh alias with my better one
 unalias gwt 2>/dev/null
-gwt() { git worktree add --track -b "$1" "$1" "${2:-origin/main}" && cd "$1"; }
+gwt() { git fetch --all && git worktree add --track -b "$1" "$1" "${2:-origin/main}" && cd "$1"; }
