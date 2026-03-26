@@ -86,6 +86,7 @@ alias less="less -R"
 alias tree="tree -C"
 alias o="xdg-open"
 alias clip="wl-copy"
+alias realdir='realpath .'
 alias clippaste="wl-paste"
 
 # nvim

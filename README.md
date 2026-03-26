@@ -115,7 +115,7 @@ The `.zshrc` sources `.zshrc.local` for work-specific aliases, functions, and co
 # Install oh-my-zsh if not already installed
 sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
-# Install custom theme
+# Install custom theme (creates a symlink so edits are tracked in dotfiles)
 cd ~/git/dotfiles
 ./install-theme.sh
 ```

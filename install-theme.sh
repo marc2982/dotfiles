@@ -22,7 +22,8 @@ if [[ ! -f "$THEME_SOURCE" ]]; then
 fi
 
 mkdir -p "$USER_HOME/.oh-my-zsh/custom/themes"
-cp "$THEME_SOURCE" "$THEME_DEST"
+ln -sf "$THEME_SOURCE" "$THEME_DEST"
 
-echo "✅ Installed marc.zsh-theme to $THEME_DEST"
+echo "✅ Symlinked marc.zsh-theme to $THEME_DEST"
+echo "   Edits to the theme are automatically tracked in dotfiles."
 echo "   Make sure your .zshrc has: ZSH_THEME=\"marc\""

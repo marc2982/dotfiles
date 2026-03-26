@@ -27,6 +27,7 @@
 	pfwl = !git push origin HEAD:$(git branchname) --force-with-lease
 	setup-bare = !git config remote.origin.fetch \"+refs/heads/*:refs/remotes/origin/*\" && git fetch origin
 	wt = "!f() { name=\"$1\"; base=\"${2:-origin/main}\"; git worktree add --track -b \"$name\" \"$name\" \"$base\"; }; f"
+	clone-bare = "!f() { local dir=\"${2:-$(basename \"$1\" .git).git}\"; git clone --bare \"$1\" \"$dir\" && git -C \"$dir\" setup-bare; }; f"
 [log]
     decorate = true
 [pull]
