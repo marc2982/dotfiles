@@ -13,12 +13,8 @@ export ENABLE_LSP_TOOL=1
 
 export EDITOR=nvim
 
-gitlab_token="$HOME/.tokens/gitlab_token"
-if [[ ! -f "$gitlab_token" ]]; then
-    echo "Warning: $gitlab_token not found"
-fi
-export GITLAB_TOKEN=$(cat $gitlab_token 2>/dev/null)
-export PERTMUX_GITLAB_TOKEN=$(cat $gitlab_token 2>/dev/null)
+export GITLAB_TOKEN=$(cat "$HOME/.tokens/gitlab_token")
+export PERTMUX_GITLAB_TOKEN=$(cat "$HOME/.tokens/gitlab_pertmux")
 
 export VOLTA_HOME="$HOME/.volta"
 export PATH="$VOLTA_HOME/bin:$PATH"
