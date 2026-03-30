@@ -9,6 +9,8 @@ export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.npm-global/bin:$PATH"
 
 export GOPATH="$HOME/go"; export GOROOT="$HOME/.go"; export PATH="$GOPATH/bin:$PATH"; # g-install: do NOT edit, see https://github.com/stefanmaric/g
+# Go's VCS stamping breaks with worktrees nested inside bare repos (exits 128)
+export GOFLAGS=-buildvcs=false
 export ENABLE_LSP_TOOL=1
 
 export EDITOR=nvim
@@ -293,3 +295,5 @@ source "$HOME/.cargo/env"
 # override oh-my-zsh alias with my better one
 unalias gwt 2>/dev/null
 gwt() { git fetch --all && git worktree add --track -b "$1" "$1" "${2:-origin/main}" && cd "$1"; }
+
+if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
