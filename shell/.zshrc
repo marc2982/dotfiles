@@ -15,8 +15,13 @@ export ENABLE_LSP_TOOL=1
 
 export EDITOR=nvim
 
-export GITLAB_TOKEN=$(cat "$HOME/.tokens/gitlab_token")
-export PERTMUX_GITLAB_TOKEN=$(cat "$HOME/.tokens/gitlab_pertmux")
+if ! command -v pass &>/dev/null; then
+  echo "pass is not installed. Aborting shell init." >&2
+  return 1
+fi
+
+export GITLAB_TOKEN="$(pass show gitlab/api)"
+export PERTMUX_GITLAB_TOKEN="$(pass show gitlab/api_pertmux)"
 
 export VOLTA_HOME="$HOME/.volta"
 export PATH="$VOLTA_HOME/bin:$PATH"

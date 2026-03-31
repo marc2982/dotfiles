@@ -42,3 +42,5 @@
     path = ~/.gitconfig.local
 [coderabbit]
 	machineId = cli/93a2e6506b9f4d06af08de7dc92b758c
+[init]
+	defaultBranch = main
