@@ -199,14 +199,13 @@ dotfiles-status    # show git status
 
 ### Automatic Backup
 
-To automatically backup your dotfiles daily at 10 AM:
+Dotfiles are automatically backed up daily at 10 AM via a systemd user timer. The script only commits and pushes if there are changes.
+
+The timer is set up automatically by `setup-new-workspace.sh`. To enable manually:
 
 ```bash
-cd ~/git/dotfiles
-./setup-auto-backup.sh
+systemctl --user enable --now dotfiles-backup.timer
 ```
-
-This installs a cronjob that runs `backup-dotfiles.sh` daily. The script only commits and pushes if there are changes. Logs are written to `~/.local/log/dotfiles-backup.log` and auto-rotated at 1MB via `rotate-log`.
 
 To manually run a backup at any time:
 
@@ -219,7 +218,34 @@ dotfiles-sync
 View backup logs:
 
 ```bash
-tail -f ~/.local/log/dotfiles-backup.log
+journalctl --user -u dotfiles-backup.service
+```
+
+### Systemd Timers
+
+All scheduled tasks use systemd user timers (in `~/.config/systemd/user/`):
+
+| Timer | Schedule | Description |
+|-------|----------|-------------|
+| `dotfiles-backup.timer` | Daily 10am | Commit & push dotfiles changes |
+| `sync-repos.timer` | Every 30min | Fast-forward Synctera main branches (when tmux is running) |
+| `git-autofetch.timer` | Every 1min | Tmux git-autofetch scan (when tmux is running) |
+| `plan-archive.timer` | Daily | Archive OpenCode plan files older than 60 days |
+
+Useful commands:
+
+```bash
+# List all active timers
+systemctl --user list-timers
+
+# Check a specific service's last run
+systemctl --user status dotfiles-backup.service
+
+# View logs for a service
+journalctl --user -u sync-repos.service
+
+# Manually trigger a service
+systemctl --user start sync-repos.service
 ```
 
 ### Managing Packages
