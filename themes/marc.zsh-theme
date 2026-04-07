@@ -122,7 +122,7 @@ function _color_repo_path() {
     local result="%F{yellow}${repo_prefix}/%F{65}${repo_name}%f"
 
     if [[ -n "$highlight_name" ]]; then
-        result+="%F{yellow}/%F{cyan}${highlight_name}%f"
+        result+="%F{245}/[wt]%F{yellow}/%F{cyan}${highlight_name}%f"
     fi
 
     if [[ -n "$toplevel" ]]; then

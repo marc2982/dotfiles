@@ -285,7 +285,7 @@ alias peon="bash /home/marc/.claude/hooks/peon-ping/peon.sh"
 memhogs() {
   free -h | awk '/^Mem:/{printf "RAM:  %s used / %s total (%s available, %s free + %s buff/cache)\n",$3,$2,$7,$4,$6} /^Swap:/{printf "Swap: %s used / %s total (%s free)\n",$3,$2,$4}'
   echo ""
-  ps aux --sort=-%mem | awk 'NR==1{printf "%-7s %-7s %s\n","MEM%","USER","COMMAND"} NR>1&&NR<=4{printf "%-7s %-7s %s\n",$4"%",$1,$11}'
+  ps aux --sort=-%mem | awk 'NR==1{printf "%-7s %-9s %-7s %s\n","MEM%","RSS","USER","COMMAND"} NR>1&&NR<=6{rss=$6; if(rss>=1048576){h=sprintf("%.1fG",rss/1048576)}else if(rss>=1024){h=sprintf("%.0fM",rss/1024)}else{h=sprintf("%dK",rss)}; printf "%-7s %-9s %-7s %s\n",$4"%",h,$1,$11}'
 }
 
 # opencode
@@ -299,6 +299,32 @@ source "$HOME/.cargo/env"
 
 # override oh-my-zsh alias with my better one
 unalias gwt 2>/dev/null
-gwt() { git fetch --all && git worktree add --track -b "$1" ".worktrees/$1" "${2:-origin/main}" && cd ".worktrees/$1"; }
+gwt() {
+    git fetch --all && \
+    (git worktree add --track -b "$1" ".worktrees/$1" "${2:-origin/main}" 2>/dev/null || \
+     git worktree add ".worktrees/$1" "$1") && \
+    cd ".worktrees/$1"
+}
+
+# clone a synctera repo with hooks and worktree exclude pre-configured
+git-clone-sc() {
+    local url="$1"
+    local name="${2:-$(basename "$url" .git)}"
+    git clone "$url" "$HOME/git/synctera/$name" && \
+    git -C "$HOME/git/synctera/$name" config core.hooksPath "$HOME/.shared-hooks" && \
+    mkdir -p "$HOME/git/synctera/$name/.git/info" && \
+    echo '.worktrees' >> "$HOME/git/synctera/$name/.git/info/exclude" && \
+    echo "Cloned $name to ~/git/synctera/$name with hooks and .worktrees exclude" && \
+    # add pertmux project entry if not already present
+    local toml="$HOME/.config/pertmux.toml"
+    if [[ -f "$toml" ]] && ! grep -q "local_path = \"$HOME/git/synctera/$name\"" "$toml"; then
+        local project_path="${url#*:}"
+        project_path="${project_path%.git}"
+        printf '\n[[project]]\nname = "%s"\nsource = "gitlab"\nproject = "%s"\nlocal_path = "%s/git/synctera/%s"\nusername = "marc287"\n' \
+            "$name" "$project_path" "$HOME" "$name" >> "$toml"
+        echo "Added $name to pertmux.toml"
+    fi && \
+    cd "$HOME/git/synctera/$name"
+}
 
 if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi

@@ -199,14 +199,14 @@ dotfiles-status    # show git status
 
 ### Automatic Backup
 
-To automatically backup your dotfiles nightly at 2 AM:
+To automatically backup your dotfiles daily at 10 AM:
 
 ```bash
 cd ~/git/dotfiles
 ./setup-auto-backup.sh
 ```
 
-This installs a cronjob that runs `backup-dotfiles.sh` daily. The script only commits and pushes if there are changes.
+This installs a cronjob that runs `backup-dotfiles.sh` daily. The script only commits and pushes if there are changes. Logs are written to `~/.local/log/dotfiles-backup.log` and auto-rotated at 1MB via `rotate-log`.
 
 To manually run a backup at any time:
 
@@ -219,7 +219,7 @@ dotfiles-sync
 View backup logs:
 
 ```bash
-tail -f /tmp/dotfiles-backup.log
+tail -f ~/.local/log/dotfiles-backup.log
 ```
 
 ### Managing Packages
