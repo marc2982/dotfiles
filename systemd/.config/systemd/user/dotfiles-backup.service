@@ -1,0 +1,7 @@
+[Unit]
+Description=Automatic dotfiles backup (commit + push if changed)
+
+[Service]
+Type=oneshot
+Environment=SSH_AUTH_SOCK=%t/keyring/.ssh
+ExecStart=/home/marc/git/dotfiles/backup-dotfiles.sh
