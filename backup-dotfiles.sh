@@ -17,8 +17,13 @@ cd "$DOTFILES_DIR" || exit 1
 # Check if there are changes to commit
 if ! /usr/bin/git diff --cached --quiet; then
 	/usr/bin/git commit -m "Auto-backup dotfiles $(date +%Y-%m-%d)"
-	/usr/bin/git push
 	echo "Dotfiles backed up successfully"
 else
 	echo "No changes to backup"
+fi
+
+# Always push if there are unpushed commits (covers manual commits too)
+if [ "$(/usr/bin/git rev-list --count @{u}..HEAD 2>/dev/null)" -gt 0 ]; then
+	/usr/bin/git push
+	echo "Pushed to remote"
 fi
