@@ -290,7 +290,7 @@ backup_existing_configs() {
 run_stow() {
 	print_step "6/10" "Creating symlinks with stow"
 
-	local packages=("shell" "tmux" "nvim" "atuin")
+	local packages=("shell" "tmux" "nvim" "atuin" "worktrunk")
 	echo -e "    ${YELLOW}Packages: ${packages[*]}${NC}"
 
 	if prompt_yes_no "    Create symlinks?" "y"; then

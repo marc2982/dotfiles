@@ -57,7 +57,7 @@ function git_custom_status() {
 
         # Decide whether to show branch name
         local show_branch=true
-        if _is_git_worktree && [[ "$branch" == "${PWD:t}" ]]; then
+        if _is_git_worktree && [[ "${branch//\//-}" == "${PWD:t}" ]]; then
             show_branch=false
         fi
 
