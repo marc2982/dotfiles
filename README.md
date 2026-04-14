@@ -268,6 +268,7 @@ stow -R shell
 ### Tmux Powerline
 
 Custom powerline theme located at `tmux/.config/tmux-powerline/themes/marc.sh`.
+Custom segments (overriding plugin defaults) live in `tmux/.config/tmux-powerline/segments/`.
 
 The `tmux-git-autofetch` segment is configured for `~/git/<company>/*` - adjust if needed.
 

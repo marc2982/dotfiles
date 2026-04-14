@@ -102,8 +102,8 @@ fi
 # shellcheck disable=SC1143,SC2128
 if [ -z "$TMUX_POWERLINE_LEFT_STATUS_SEGMENTS" ]; then
 	TMUX_POWERLINE_LEFT_STATUS_SEGMENTS=(
-		#"tmux_session_info 148 234"
 		"hostname 33 0"
+		"tmux_session_info 148 234"
 		#"mode_indicator 165 0"
 		#"ifstat 30 255"
 		#"ifstat_sys 30 255"
@@ -140,17 +140,17 @@ if [ -z "$TMUX_POWERLINE_RIGHT_STATUS_SEGMENTS" ]; then
 		# 		echo "cpu_temp #303080 136"
 		# 	fi
 		# )"
-	    # "$(
-	    #   if (($(tp_mem_used_percentage_at_least 90))); then
-	    #     echo "mem_used #ff2020 235"
-	    #   elif (($(tp_mem_used_percentage_at_least 75))); then
-	    #   	echo "mem_used 136 235"
-	    #   else
+		# "$(
+		#   if (($(tp_mem_used_percentage_at_least 90))); then
+		#     echo "mem_used #ff2020 235"
+		#   elif (($(tp_mem_used_percentage_at_least 75))); then
+		#   	echo "mem_used 136 235"
+		#   else
 		#		echo "mem_used 235 136"
-	    #   fi
-	    # )"
+		#   fi
+		# )"
 		#"xkb_layout 125 117"
-tmux_prefix_highlight 166 235
+		tmux_prefix_highlight 166 235
 		"tmux_continuum_save"
 		"tmux_continuum_status 22 15"
 		"date_day 235 136"

@@ -33,7 +33,7 @@ export TMUX_POWERLINE_STATUS_INTERVAL="1"
 export TMUX_POWERLINE_STATUS_JUSTIFICATION="centre"
 
 # The maximum length of the left status bar.
-export TMUX_POWERLINE_STATUS_LEFT_LENGTH="60"
+export TMUX_POWERLINE_STATUS_LEFT_LENGTH="120"
 # The maximum length of the right status bar.
 export TMUX_POWERLINE_STATUS_RIGHT_LENGTH="90"
 
@@ -337,7 +337,7 @@ export TMUX_POWERLINE_SEG_NOW_PLAYING_PLEXAMP_UPDATE_PERIOD="30"
 
 # pwd.sh {
 # Maximum length of output.
-export TMUX_POWERLINE_SEG_PWD_MAX_LEN="40"
+export TMUX_POWERLINE_SEG_PWD_MAX_LEN="50"
 # }
 
 # time.sh {

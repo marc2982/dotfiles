@@ -1,9 +1,9 @@
 [Unit]
-Description=Daily dotfiles backup at 10am
+Description=Hourly dotfiles backup while working
 
 [Timer]
-OnCalendar=*-*-* 10:00:00
-Persistent=true
+OnCalendar=hourly
+Persistent=false
 
 [Install]
 WantedBy=timers.target

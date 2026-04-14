@@ -307,6 +307,11 @@ git-last-touch-fixup() {
     fi
 }
 
+# Show last run time and result for user systemd services
+systemd-status() {
+  systemctl --user list-timers --all --no-pager 2>/dev/null
+}
+
 # ==============================================================================
 # Local overrides (not tracked in dotfiles)
 # ==============================================================================
