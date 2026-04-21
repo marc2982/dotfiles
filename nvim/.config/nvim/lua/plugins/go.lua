@@ -11,6 +11,7 @@ return {
     opts = {
       servers = {
         gopls = {
+          cmd = { "gopls", "-remote=auto" },
           settings = {
             gopls = {
               usePlaceholders = true,
