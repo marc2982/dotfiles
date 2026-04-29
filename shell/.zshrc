@@ -10,11 +10,13 @@ export ENABLE_LSP_TOOL=1
 export GIT_PAGER="less -FRX"  # scrollable, leaves output in terminal after exit
 export DOTFILES_DIR="$HOME/git/dotfiles"
 
+# PATH prepends. Order matters: later entries take precedence.
+# Lowest priority first, highest last.
+export PATH="$HOME/.npm-global/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 export VOLTA_HOME="$HOME/.volta"
 export PATH="$VOLTA_HOME/bin:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/.npm-global/bin:$PATH"
-export PATH=/home/marc/.opencode/bin:$PATH
+export PATH="$HOME/.opencode/bin:$PATH"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -26,17 +28,20 @@ if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-clou
 # Cargo
 source "$HOME/.cargo/env"
 
-# pass is required for secrets loaded in .zshrc.local
-if ! command -v pass &>/dev/null; then
-  echo "pass is not installed. Aborting shell init." >&2
-  return 1
+# pass is required for secrets in .zshrc.local; skip that file gracefully if missing
+if command -v pass &>/dev/null; then
+    _pass_available=1
+else
+    echo "warning: pass not installed; skipping .zshrc.local" >&2
+    _pass_available=0
 fi
 
 # ==============================================================================
 # Shell options & history
 # ==============================================================================
-setopt extendedglob    # Advanced glob patterns (**, ^, etc.)
-setopt notify          # Immediate background job notifications
+setopt extendedglob          # Advanced glob patterns (**, ^, etc.)
+setopt notify                # Immediate background job notifications
+setopt INTERACTIVE_COMMENTS  # Allow # comments at the prompt
 
 HISTFILE=~/.zsh_history
 HISTSIZE=100000
@@ -44,6 +49,7 @@ SAVEHIST=100000
 setopt SHARE_HISTORY
 setopt HIST_IGNORE_DUPS
 setopt HIST_IGNORE_SPACE
+setopt HIST_VERIFY            # Show expanded history command before running
 
 # ==============================================================================
 # oh-my-zsh (runs compinit internally)
@@ -51,8 +57,8 @@ setopt HIST_IGNORE_SPACE
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="marc"
 plugins=(
-	aliases
-	git
+    aliases
+    git
     zsh-autosuggestions
 )
 source $ZSH/oh-my-zsh.sh
@@ -70,15 +76,15 @@ bindkey  "^[[4~"   end-of-line
 bindkey  "^A"      beginning-of-line
 bindkey  "^E"      end-of-line
 bindkey  "^[[3~"   delete-char
-bindkey  "[[1;3D"  backward-word
-bindkey  "[[1;3C"  forward-word
+bindkey  "^[[1;3D"  backward-word
+bindkey  "^[[1;3C"  forward-word
 
-# Ctrl-P: accept autosuggestion if text exists, otherwise navigate history
+# Ctrl-P: history search by prefix when typing, else previous command
+# Alternative: try `zsh-history-substring-search` (oh-my-zsh plugin) for
+# substring matching anywhere in the command instead of just the prefix.
 _custom_ctrl_p() {
     if [[ ${#BUFFER} -gt 0 ]]; then
-        if (( $+functions[_zsh_autosuggest_accept] )); then
-            zle autosuggest-accept
-        fi
+        zle history-beginning-search-backward
     else
         zle up-history
     fi
@@ -97,6 +103,9 @@ _custom_ctrl_n() {
 zle -N _custom_ctrl_n
 bindkey '^N' _custom_ctrl_n
 
+# Ctrl-F: accept autosuggestion (right-arrow/End also work)
+bindkey '^F' autosuggest-accept
+
 # ==============================================================================
 # Plugins & integrations (after oh-my-zsh)
 # ==============================================================================
@@ -108,7 +117,9 @@ eval "$(atuin init zsh --disable-up-arrow)"
 source /usr/share/autojump/autojump.zsh
 
 # tmux git autofetch on directory change
+autoload -U add-zsh-hook
 tmux-git-autofetch() {
+    git rev-parse --git-dir &>/dev/null || return
     (/home/marc/.tmux/plugins/tmux-git-autofetch/git-autofetch.tmux --current &)
 }
 add-zsh-hook chpwd tmux-git-autofetch
@@ -122,7 +133,7 @@ if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)
 
 # General
 alias ls="ls --color"
-alias less="less -R"
+alias less="less -FRXi"
 alias tree="tree -C"
 alias o="xdg-open"
 alias clip="wl-copy"
@@ -134,8 +145,7 @@ alias vim="nvim"
 alias v="nvim"
 
 # Git
-alias br="git branch"
-alias ch="git checkout"
+alias br="git br"
 alias co="git commit -v -a"
 alias ca="git commit -v -a --amend"
 alias can="git commit -v -a --amend --no-edit"
@@ -149,8 +159,7 @@ alias dotfiles='cd "$DOTFILES_DIR"'
 # ==============================================================================
 
 mkcd() {
-    mkdir -p "$@"
-    cd "$@"
+    mkdir -p "$1" && cd "$1"
 }
 
 memhogs() {
@@ -159,13 +168,10 @@ memhogs() {
   ps aux --sort=-%mem | awk 'NR==1{printf "%-7s %-9s %-7s %s\n","MEM%","RSS","USER","COMMAND"} NR>1&&NR<=6{rss=$6; if(rss>=1048576){h=sprintf("%.1fG",rss/1048576)}else if(rss>=1024){h=sprintf("%.0fM",rss/1024)}else{h=sprintf("%dK",rss)}; printf "%-7s %-9s %-7s %s\n",$4"%",h,$1,$11}'
 }
 
-# OpenCode: use port 0 for pertmux support but not for subcommands (like auth)
-unalias opencode 2>/dev/null
+# OpenCode: use port 0 for per-tmux support but not for subcommands (like auth)
 opencode() { if [ $# -eq 0 ]; then command opencode --port 0; else command opencode "$@"; fi; }
 
 # --- Dotfiles management ---
-unalias dotfiles-sync 2>/dev/null
-unalias dotfiles-status 2>/dev/null
 
 dotfiles-sync() {
     (
@@ -315,4 +321,5 @@ systemd-status() {
 # ==============================================================================
 # Local overrides (not tracked in dotfiles)
 # ==============================================================================
-[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
+[[ -f ~/.zshrc.local && $_pass_available -eq 1 ]] && source ~/.zshrc.local
+unset _pass_available
