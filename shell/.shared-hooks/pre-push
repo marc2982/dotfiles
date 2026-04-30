@@ -37,6 +37,26 @@ if command -v go > /dev/null 2>&1 && [ -f go.mod ]; then
     fi
 fi
 
+# Run repo-specific pre-push hook if present. Allows individual repos to
+# layer extra checks (e.g. matrix validation, spec consistency) without
+# diverging from the shared hook. Lookup order is the first match of:
+#   .githooks/pre-push   (preferred, matches conventional naming)
+#   .git-hooks/pre-push  (legacy alias)
+repo_hook=""
+for candidate in .githooks/pre-push .git-hooks/pre-push; do
+    if [ -x "$candidate" ]; then
+        repo_hook="$candidate"
+        break
+    fi
+done
+if [ -n "$repo_hook" ]; then
+    echo "Pre-push: Running repo-specific hook '$repo_hook'..."
+    if ! "./$repo_hook" "$remote" "$url"; then
+        echo "✗ Repo-specific pre-push hook failed, rejecting push"
+        exit 1
+    fi
+fi
+
 # Check for any dirty changes (unstaged, staged, or untracked generated files)
 if ! git diff --quiet || ! git diff --cached --quiet; then
     echo "✗ Dirty changes detected after running 'make generate lint' and 'go mod tidy'"
