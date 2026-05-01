@@ -139,6 +139,7 @@ alias o="xdg-open"
 alias clip="wl-copy"
 alias clippaste="wl-paste"
 alias realdir='realpath .'
+alias rl='exec zsh'
 
 # Nvim
 alias vim="nvim"
