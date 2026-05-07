@@ -151,6 +151,8 @@ alias co="git commit -v -a"
 alias ca="git commit -v -a --amend"
 alias can="git commit -v -a --amend --no-edit"
 alias st="git status"
+alias wts='wt switch'    # switch worktree (interactive picker if no arg)
+alias wtm='wt switch ^'  # jump to main worktree (default branch)
 
 # Dotfiles
 alias dotfiles='cd "$DOTFILES_DIR"'
