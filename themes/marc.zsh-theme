@@ -62,8 +62,9 @@ function git_custom_status() {
         fi
 
         # Symlink indicator: muted grey L→ if PWD is via symlink
+        # Normalize trailing slash so shells launched with PWD="/foo/" don't trip the check
         local symlink_hint=""
-        if [[ "$PWD" != "$(realpath "$PWD" 2>/dev/null)" ]]; then
+        if [[ "${PWD%/}" != "$(realpath "$PWD" 2>/dev/null)" ]]; then
             symlink_hint="%F{245}L→ %f"
         fi
 
@@ -110,8 +111,12 @@ function _color_repo_path() {
     local toplevel="$3"       # working tree root (for subdir computation); empty to skip
     local highlight_name="$4" # optional segment after repo in cyan (e.g. worktree name)
 
+    # Normalize PWD: strip trailing slash so a tmux/script-launched shell
+    # with PWD="/foo/bar/" doesn't render as ".../bar/" with a stray slash.
+    local pwd_norm="${PWD%/}"
+
     # Symlink guard: PWD must start with toplevel, otherwise fall back
-    if [[ -n "$toplevel" && "$PWD" != "$toplevel"* ]]; then
+    if [[ -n "$toplevel" && "$pwd_norm" != "$toplevel"* ]]; then
         return 1
     fi
 
@@ -126,7 +131,7 @@ function _color_repo_path() {
     fi
 
     if [[ -n "$toplevel" ]]; then
-        local subdir="${PWD#$toplevel}"
+        local subdir="${pwd_norm#$toplevel}"
         if [[ -n "$subdir" ]]; then
             result+="%F{yellow}${subdir}"
         fi
