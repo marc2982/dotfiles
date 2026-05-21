@@ -16,3 +16,10 @@ vim.opt.colorcolumn = "128" -- visual guide at 128 characters
 vim.opt.swapfile = false
 vim.opt.autoread = true
 vim.opt.fileformats = "unix,dos"
+
+-- Force Neovim to treat Google Apps Script (.gs) files as standard JavaScript
+vim.filetype.add({
+  extension = {
+    gs = "javascript",
+  },
+})
