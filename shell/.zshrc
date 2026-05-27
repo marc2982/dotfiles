@@ -138,6 +138,16 @@ alias tree="tree -C"
 alias o="xdg-open"
 alias clip="wl-copy"
 alias clippaste="wl-paste"
+
+# Pipe target: copies "$ <cmd>\n<output>" to the clipboard.
+#   usage: <any pipeline> | clipcmd
+clipcmd() {
+  emulate -L zsh
+  local cmd=${history[$HISTCMD]}
+  cmd=$(print -r -- "$cmd" | sed -E 's/[[:space:]]*\|[[:space:]]*clipcmd[[:space:]]*$//')
+  # Strip ANSI escape codes from stdin so GUI paste handlers don't choke.
+  { printf '$ %s\n' "$cmd"; sed -E 's/\x1b\[[0-9;]*[a-zA-Z]//g'; } | clip
+}
 alias realdir='realpath .'
 alias rl='exec zsh'
 
