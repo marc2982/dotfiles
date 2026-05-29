@@ -10,7 +10,7 @@ return {
     ensure_installed = {
       "bash", "c", "diff", "go", "gomod", "gosum", "gowork",
       "git_config", "git_rebase", "gitattributes", "gitcommit", "gitignore",
-      "html", "javascript", "jsdoc", "json", "json5", "jsonc",
+      "html", "javascript", "jsdoc", "json", "json5",
       "lua", "luadoc", "luap", "make", "markdown", "markdown_inline",
       "ninja", "printf", "python", "query", "regex", "rst", "sql",
       "toml", "tsx", "typescript", "vim", "vimdoc", "xml", "yaml",
