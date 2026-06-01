@@ -63,6 +63,9 @@ plugins=(
 )
 source $ZSH/oh-my-zsh.sh
 
+# Drop OMZ git plugin's `g=git` alias; we use g (stefanmaric/g) for Go.
+unalias g 2>/dev/null
+
 # Completion styles (after oh-my-zsh compinit)
 zstyle ':completion:*' menu select
 
