@@ -138,6 +138,7 @@ alias tree="tree -C"
 alias o="xdg-open"
 alias clip="wl-copy"
 alias clippaste="wl-paste"
+alias oc="opencode"
 
 # Pipe target: copies "$ <cmd>\n<output>" to the clipboard.
 #   usage: <any pipeline> | clipcmd
