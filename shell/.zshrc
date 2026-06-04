@@ -144,7 +144,8 @@ alias clippaste="wl-paste"
 alias oc="opencode"
 
 # Pipe target: copies "$ <cmd>\n<output>" to the clipboard.
-#   usage: <any pipeline> | clipcmd
+#   usage: <any pipeline> | clipcmd      # stdout only
+#          <any pipeline> |& clipcmd     # stdout + stderr (zsh shorthand for 2>&1 |)
 clipcmd() {
   emulate -L zsh
   local cmd=${history[$HISTCMD]}
