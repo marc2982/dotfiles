@@ -336,6 +336,12 @@ systemd-status() {
   systemctl --user list-timers --all --no-pager 2>/dev/null
 }
 
+# Minimal command-not-found handler (replaces PackageKit's slow D-Bus version)
+command_not_found_handler() {
+  print -u2 "zsh: command not found: $1"
+  return 127
+}
+
 # ==============================================================================
 # Local overrides (not tracked in dotfiles)
 # ==============================================================================
