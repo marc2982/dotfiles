@@ -336,7 +336,13 @@ systemd-status() {
   systemctl --user list-timers --all --no-pager 2>/dev/null
 }
 
-# Minimal command-not-found handler (replaces PackageKit's slow D-Bus version)
+# Minimal command-not-found handler.
+# Fedora's PackageKit-command-not-found ships /etc/profile.d/PackageKit.sh,
+# which registers a handler that shells out to /usr/libexec/pk-command-not-found
+# and queries PackageKit over D-Bus to suggest "did you mean to install X?".
+# That round-trip hangs the terminal for seconds on every typo.
+# Fix: `sudo dnf remove PackageKit-command-not-found` and define our own
+# no-op handler so zsh still prints a message instead of silent return 127.
 command_not_found_handler() {
   print -u2 "zsh: command not found: $1"
   return 127
