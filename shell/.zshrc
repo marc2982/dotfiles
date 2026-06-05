@@ -366,3 +366,5 @@ preexec() {
 }
 # sqz — end of auto-installed block
 
+
+export PATH=$PATH:/home/marc/.spicetify
