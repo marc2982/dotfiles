@@ -172,6 +172,9 @@ gwtm() { wt switch '^' }  # jump to main worktree (default branch)
 # Dotfiles
 alias dotfiles='cd "$DOTFILES_DIR"'
 
+# format zshrc functions
+bbat() { bat -l zsh <(declare -f "$1") }
+
 # ==============================================================================
 # Functions
 # ==============================================================================
