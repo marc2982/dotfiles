@@ -1,17 +1,12 @@
 return {
   {
-    "nvim-treesitter/nvim-treesitter",
-    opts = function(_, opts)
-      opts.ensure_installed = opts.ensure_installed or {}
-      vim.list_extend(opts.ensure_installed, { "go", "gomod", "gosum", "gowork", "python", "vim", "yaml" })
-    end,
-  },
-  {
     "neovim/nvim-lspconfig",
     opts = {
       servers = {
         gopls = {
-          cmd = { "gopls", "-remote=auto" },
+          -- Use the PATH gopls (~/go/bin/gopls); don't let Mason install/manage a second copy.
+          mason = false,
+          cmd = { "gopls" },
           settings = {
             gopls = {
               usePlaceholders = true,
