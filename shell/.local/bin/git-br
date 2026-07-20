@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# git-br — a nicer `git branch`.
+#
+# On PATH as `git-br`, so `git br [...]` invokes it automatically.
+#
+# LIST MODE (pretty, committerdate-sorted, worktree-aware):
+#   git br              local branches
+#   git br -a|--all     local + remote-tracking branches
+#   git br -r|--remotes remote-tracking branches only
+#
+# Anything else is passed straight through to real `git branch`, so muscle
+# memory keeps working:
+#   git br -D foo bar     delete branches
+#   git br -d foo         delete (safe)
+#   git br -m old new     rename
+#   git br --contains X   filter, etc.
+#
+#   git br -h|--help      this help
+
+set -uo pipefail
+
+fmt='%(if)%(symref)%(then)%(else)%(HEAD)%(if)%(worktreepath)%(then)%(color:blue)+%(color:reset)%(else) %(end) %(if)%(worktreepath)%(then)%(color:blue)%(end)%(align:30,left)%(refname:short)%(color:reset)%(end) %(color:normal dim)%(objectname:short)%(color:reset) %(color:green)(%(committerdate:relative))%(color:reset)%(end)'
+
+list() { # $1 = ref pattern(s)
+  git for-each-ref --color=auto --sort=committerdate $1 --format="$fmt" | grep -v '^$'
+}
+
+case "${1:-}" in
+  ""            ) list "refs/heads/" ;;
+  -a|--all      ) list "refs/heads/ refs/remotes/" ;;
+  -r|--remotes  ) list "refs/remotes/" ;;
+  -h|--help     ) sed -n '2,/^set /{/^set /d;s/^# \{0,1\}//p}' "$0" ;;
+  *             ) exec git branch "$@" ;;
+esac
