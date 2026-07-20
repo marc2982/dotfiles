@@ -22,7 +22,11 @@ set -uo pipefail
 fmt='%(if)%(symref)%(then)%(else)%(HEAD)%(if)%(worktreepath)%(then)%(color:blue)+%(color:reset)%(else) %(end) %(if)%(worktreepath)%(then)%(color:blue)%(end)%(align:30,left)%(refname:short)%(color:reset)%(end) %(color:normal dim)%(objectname:short)%(color:reset) %(color:green)(%(committerdate:relative))%(color:reset)%(end)'
 
 list() { # $1 = ref pattern(s)
-  git for-each-ref --color=auto --sort=committerdate $1 --format="$fmt" | grep -v '^$'
+  # The pipe to grep hides the TTY from git, so --color=auto would strip color.
+  # Detect the terminal ourselves and force color only when stdout is a TTY.
+  local color=never
+  [ -t 1 ] && color=always
+  git for-each-ref --color=$color --sort=committerdate $1 --format="$fmt" | grep -v '^$'
 }
 
 case "${1:-}" in
