@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Sleep with an Alberta-time start/resume banner (for agent polling loops).
+# Usage: zzz [seconds]   (default 30)
+set -euo pipefail
+secs="${1:-30}"
+now=$(TZ='America/Edmonton' date '+%b %d, %H:%M:%S')
+resume=$(TZ='America/Edmonton' date -d "+${secs} seconds" '+%H:%M:%S')
+echo "[$now] sleeping ${secs}s, resumes: $resume"
+sleep "$secs"
