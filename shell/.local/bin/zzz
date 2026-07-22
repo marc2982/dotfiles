@@ -2,7 +2,31 @@
 # Sleep with an Alberta-time start/resume banner (for agent polling loops).
 # Usage: zzz [seconds]   (default 30)
 set -euo pipefail
+
+usage() {
+  cat <<'EOF'
+zzz [seconds]  -  sleep with an Alberta-time start/resume banner.
+
+Prints "[<start>] sleeping <n>s, resumes: <end>" then sleeps.
+Meant for polling loops so progress is visible live; don't pipe/redirect
+the output. Default is 30 seconds.
+
+  zzz        sleep 30s
+  zzz 150    sleep 150s
+  zzz -h     show this help
+EOF
+}
+
+case "${1:-}" in
+  -h | --help) usage; exit 0 ;;
+esac
+
 secs="${1:-30}"
+if ! [[ "$secs" =~ ^[0-9]+$ ]]; then
+  echo "zzz: seconds must be a non-negative integer (got '$secs')" >&2
+  exit 1
+fi
+
 now=$(TZ='America/Edmonton' date '+%b %d, %H:%M:%S')
 resume=$(TZ='America/Edmonton' date -d "+${secs} seconds" '+%H:%M:%S')
 echo "[$now] sleeping ${secs}s, resumes: $resume"
