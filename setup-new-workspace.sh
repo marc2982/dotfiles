@@ -297,7 +297,10 @@ run_stow() {
 		cd "$DOTFILES_DIR"
 		for package in "${packages[@]}"; do
 			if [[ -d "$package" ]]; then
-				if run_as_user stow -t "$REAL_HOME" "$package" 2>&1 | tee -a "$LOG_FILE"; then
+				# --no-folding: create real dirs + per-file relative links instead of
+				# symlinking whole dirs. Required for ~/.local/bin, which holds many
+				# non-dotfile binaries (bat, glab, mrquick, …) that must coexist.
+				if run_as_user stow --no-folding -t "$REAL_HOME" "$package" 2>&1 | tee -a "$LOG_FILE"; then
 					print_success "Stowed $package"
 				else
 					print_error "Failed to stow $package"
@@ -311,37 +314,6 @@ run_stow() {
 	else
 		print_info "Skipped stow"
 	fi
-}
-
-link_local_bins() {
-	print_step "6b/10" "Linking ~/.local/bin scripts"
-
-	# stow can skip files under shell/.local/bin/ when ~/.local/bin already
-	# exists as a real directory (folding quirk), so link them explicitly.
-	local src_dir="$DOTFILES_DIR/shell/.local/bin"
-	local dest_dir="$REAL_HOME/.local/bin"
-
-	if [[ ! -d "$src_dir" ]]; then
-		print_info "No shell/.local/bin to link"
-		return
-	fi
-
-	run_as_user mkdir -p "$dest_dir"
-	local linked=false
-	for src in "$src_dir"/*; do
-		[[ -e "$src" ]] || continue
-		local name
-		name=$(basename "$src")
-		local dest="$dest_dir/$name"
-		if [[ -L "$dest" ]] && [[ "$(readlink -f "$dest")" == "$(readlink -f "$src")" ]]; then
-			print_success "$name already linked"
-		else
-			run_as_user ln -sf "$src" "$dest"
-			print_success "Linked $name → ~/.local/bin/"
-			linked=true
-		fi
-	done
-	[[ "$linked" == false ]] && print_info "All ~/.local/bin scripts already linked"
 }
 
 install_tpm() {
@@ -439,7 +411,6 @@ main() {
 	install_theme
 	backup_existing_configs
 	run_stow
-	link_local_bins
 	install_tpm
 	setup_auto_backup
 	install_peon_ping
