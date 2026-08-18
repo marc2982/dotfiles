@@ -189,6 +189,12 @@ memhogs() {
   ps aux --sort=-%mem | awk 'NR==1{printf "%-7s %-9s %-7s %s\n","MEM%","RSS","USER","COMMAND"} NR>1&&NR<=6{rss=$6; if(rss>=1048576){h=sprintf("%.1fG",rss/1048576)}else if(rss>=1024){h=sprintf("%.0fM",rss/1024)}else{h=sprintf("%dK",rss)}; printf "%-7s %-9s %-7s %s\n",$4"%",h,$1,$11}'
 }
 
+cpuhogs() {
+  awk -v n="$(nproc)" '{printf "Load: %s %s %s (1/5/15 min, %d cores)\n",$1,$2,$3,n}' /proc/loadavg
+  echo ""
+  ps aux --sort=-%cpu | awk 'NR==1{printf "%-7s %-7s %-7s %s\n","CPU%","MEM%","USER","COMMAND"} NR>1&&NR<=6{printf "%-7s %-7s %-7s %s\n",$3"%",$4"%",$1,$11}'
+}
+
 # OpenCode: use port 0 for per-tmux support but not for subcommands (like auth)
 opencode() { if [ $# -eq 0 ]; then command opencode --port 0; else command opencode "$@"; fi; }
 
