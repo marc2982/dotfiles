@@ -192,7 +192,8 @@ memhogs() {
 cpuhogs() {
   awk -v n="$(nproc)" '{printf "Load: %s %s %s (1/5/15 min, %d cores)\n",$1,$2,$3,n}' /proc/loadavg
   echo ""
-  ps aux --sort=-%cpu | awk 'NR==1{printf "%-7s %-7s %-7s %s\n","CPU%","MEM%","USER","COMMAND"} NR>1&&NR<=6{printf "%-7s %-7s %-7s %s\n",$3"%",$4"%",$1,$11}'
+  # top's 2nd sample = CPU over the interval (instantaneous), unlike ps aux's lifetime average.
+  top -bn2 -d 0.3 -w 512 -o %CPU | awk '/^ *PID/{p++} p==2' | awk 'NR==1{printf "%-7s %-7s %-9s %s\n","CPU%","MEM%","USER","COMMAND"} NR>1&&NR<=6{printf "%-7s %-7s %-9s %s\n",$9"%",$10"%",$2,$12}'
 }
 
 # OpenCode: use port 0 for per-tmux support but not for subcommands (like auth)
