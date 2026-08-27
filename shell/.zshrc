@@ -202,3 +202,10 @@ preexec() {
 
 
 export PATH=$PATH:/home/marc/.spicetify
+
+# bun completions
+[ -s "/home/marc/.bun/_bun" ] && source "/home/marc/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
