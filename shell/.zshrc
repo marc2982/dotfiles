@@ -188,19 +188,6 @@ bbat() { bat -l zsh <(declare -f "$1") }
 [[ -f ~/.zshrc.local && $_pass_available -eq 1 ]] && source ~/.zshrc.local
 unset _pass_available
 
-# sqz — context intelligence layer (auto-installed)
-sqz_run() {
-    "$@" 2>&1 | SQZ_CMD="$*" sqz compress
-}
-sqz_sudo() {
-    sudo "$@" 2>&1 | SQZ_CMD="sudo $*" sqz compress
-}
-preexec() {
-    export __SQZ_CMD="$1"
-}
-# sqz — end of auto-installed block
-
-
 export PATH=$PATH:/home/marc/.spicetify
 
 # bun completions
