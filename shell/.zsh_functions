@@ -17,15 +17,38 @@ memhogs() {
 
 cpuhogs() {
   local secs="${1:-5}"
-  awk -v n="$(nproc)" '{printf "Load: %s %s %s (1/5/15 min, %d cores)\n",$1,$2,$3,n}' /proc/loadavg
   printf "Polling CPU for %ss..." "$secs" >&2
   # top's 2nd sample = CPU over the interval, so the delay between the two samples
-  # IS the polling window. Averaging over ~5s smooths out momentary spikes.
+  # IS the polling window. Averaging over ~5s smooths out momentary spikes. One
+  # run gives us both the %Cpu(s) summary (for the IO verdict) and the process rows.
   local out
-  out="$(top -bn2 -d "$secs" -w 512 -o %CPU | awk '/^ *PID/{p++} p==2')"
+  out="$(top -bn2 -d "$secs" -w 512 -o %CPU | awk '/^ *PID/{p++} p>=1')"
   printf "\r\033[K" >&2   # erase the polling line
+
+  # Load line + CPU-bound vs IO-bound verdict from the 2nd sample's %Cpu(s) row
+  # (wa = time blocked on IO, id = idle). High load + high wa = disk-bound, not CPU.
+  echo "$out" | awk -v n="$(nproc)" '
+    /^%Cpu/ { for(i=1;i<=NF;i++){ if($i=="wa")wa=$(i-1); if($i=="id")id=$(i-1) } }
+    END {
+      "cut -d\" \" -f1-3 /proc/loadavg" | getline la
+      split(la, L, " ")
+      verdict = (wa+0 >= 15) ? sprintf("IO-bound (iowait %.0f%%)", wa) : \
+                (id+0 <= 20) ? sprintf("CPU-bound (idle %.0f%%)", id)  : \
+                                sprintf("relaxed (idle %.0f%%)", id)
+      printf "Load: %s %s %s (1/5/15 min, %d cores) \xc2\xb7 %s\n", L[1],L[2],L[3],n,verdict
+    }'
   echo ""
-  echo "$out" | awk 'NR==1{printf "%-7s %-7s %-9s %s\n","CPU%","MEM%","USER","COMMAND"} NR>1&&NR<=6{printf "%-7s %-7s %-9s %s\n",$9"%",$10"%",$2,$12}'
+
+  # Process rows: capture PID (col 1) to look up live thread count from /proc.
+  echo "$out" | awk '
+    /^ *PID/ { p++ }
+    p==2 && /^ *PID/ { printf "%-7s %-7s %-5s %-9s %s\n","CPU%","MEM%","THR","USER","COMMAND"; next }
+    p==2 && seen<5 {
+      thr="?"; f="/proc/"$1"/status"
+      while ((getline line < f) > 0) if (line ~ /^Threads:/) { split(line,t," "); thr=t[2]; break }
+      close(f)
+      printf "%-7s %-7s %-5s %-9s %s\n",$9"%",$10"%",thr,$2,$12; seen++
+    }'
 }
 
 # --- Dotfiles management ---
