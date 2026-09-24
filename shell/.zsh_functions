@@ -16,10 +16,16 @@ memhogs() {
 }
 
 cpuhogs() {
+  local secs="${1:-5}"
   awk -v n="$(nproc)" '{printf "Load: %s %s %s (1/5/15 min, %d cores)\n",$1,$2,$3,n}' /proc/loadavg
+  printf "Polling CPU for %ss..." "$secs" >&2
+  # top's 2nd sample = CPU over the interval, so the delay between the two samples
+  # IS the polling window. Averaging over ~5s smooths out momentary spikes.
+  local out
+  out="$(top -bn2 -d "$secs" -w 512 -o %CPU | awk '/^ *PID/{p++} p==2')"
+  printf "\r\033[K" >&2   # erase the polling line
   echo ""
-  # top's 2nd sample = CPU over the interval (instantaneous), unlike ps aux's lifetime average.
-  top -bn2 -d 0.3 -w 512 -o %CPU | awk '/^ *PID/{p++} p==2' | awk 'NR==1{printf "%-7s %-7s %-9s %s\n","CPU%","MEM%","USER","COMMAND"} NR>1&&NR<=6{printf "%-7s %-7s %-9s %s\n",$9"%",$10"%",$2,$12}'
+  echo "$out" | awk 'NR==1{printf "%-7s %-7s %-9s %s\n","CPU%","MEM%","USER","COMMAND"} NR>1&&NR<=6{printf "%-7s %-7s %-9s %s\n",$9"%",$10"%",$2,$12}'
 }
 
 # --- Dotfiles management ---
