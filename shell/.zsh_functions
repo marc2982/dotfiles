@@ -32,7 +32,7 @@ cpuhogs() {
   # Load line + CPU-bound vs IO-bound verdict from the 2nd sample's %Cpu(s) row
   # (wa = time blocked on IO, id = idle). High load + high wa = disk-bound, not CPU.
   echo "$out" | awk -v n="$(nproc)" '
-    /^%Cpu/ { for(i=1;i<=NF;i++){ if($i=="wa")wa=$(i-1); if($i=="id")id=$(i-1) } }
+    /^%Cpu/ { for(i=1;i<=NF;i++){ if($i~/^wa,?$/)wa=$(i-1); if($i~/^id,?$/)id=$(i-1) } }
     END {
       "cut -d\" \" -f1-3 /proc/loadavg" | getline la
       split(la, L, " ")
