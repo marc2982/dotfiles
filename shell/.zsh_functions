@@ -16,6 +16,10 @@ memhogs() {
 }
 
 cpuhogs() {
+  if [[ "$1" == (-c|--capture) ]]; then
+    _cpuhogs_capture "${2:-60}"
+    return
+  fi
   local secs="${1:-5}"
   printf "Polling CPU for %ss..." "$secs" >&2
   # top's 2nd sample = CPU over the interval, so the delay between the two samples
@@ -49,6 +53,105 @@ cpuhogs() {
       close(f)
       printf "%-7s %-7s %-5s %-9s %s\n",$9"%",$10"%",thr,$2,$12; seen++
     }'
+}
+
+# cpuhogs --capture [secs]: sample /proc every second for a window (Ctrl-C ends early) and
+# total CPU per command. Catches bursts of short-lived processes (builds, hooks, test runs)
+# that a one-shot cpuhogs misses. Processes that live and die between samples are never seen,
+# but their CPU lands in the parent's cutime/cstime when reaped, so it's billed to the parent
+# as "<parent> (children)". Seen-then-exited children are subtracted to avoid double counting.
+_cpuhogs_capture() {
+  emulate -L zsh
+  setopt localtraps
+  zmodload zsh/datetime zsh/zselect
+  local secs="$1" tmp stop= i sample
+  tmp="$(mktemp)"
+  trap 'stop=1' INT
+
+  for (( i = 0; i <= secs && ! stop; i++ )); do
+    printf "\rCapturing %ds / %ds (Ctrl-C to stop early)..." "$i" "$secs" >&2
+    # One line per process: pid:starttime ppid self_ticks reaped_child_ticks comm.
+    # starttime in the key keeps a recycled PID from looking like the same process.
+    sample="$(awk -v ts="$(strftime %T $EPOCHSECONDS)" '
+      BEGIN {
+        getline up < "/proc/uptime"; split(up, U, " ")
+        getline la < "/proc/loadavg"; split(la, L, " ")
+        getline st < "/proc/stat"; split(st, C, " ")
+        for (j = 2; j <= 9; j++) tot += C[j]
+        print "S", U[1], L[1], ts, tot, C[5] + C[6]
+        me = PROCINFO["pid"]
+        # getline, not awk file args: a process exiting mid-read is a fatal error for those.
+        for (a = 1; a < ARGC; a++) {
+          line = ""; ok = (getline line < ARGV[a]) > 0; close(ARGV[a])
+          if (!ok) continue
+          split(line, p, " "); if (p[1] == me) continue
+          o = index(line, "("); r = match(line, /\)[^)]*$/)
+          split(substr(line, r + 2), f, " ")
+          print p[1] ":" f[20], f[2], f[12] + f[13], f[14] + f[15], substr(line, o + 1, r - o - 1)
+        }
+        exit
+      }' /proc/[0-9]*/stat 2>/dev/null)"
+    [[ -z "$stop" ]] && print -r -- "$sample" >> "$tmp"
+    (( i < secs && ! stop )) && zselect -t 100
+  done
+  printf "\r\033[K" >&2
+
+  awk -v hz="$(getconf CLK_TCK)" -v ncpu="$(nproc)" -v me="$$" '
+    function byval(i1, v1, i2, v2) { return v2 - v1 }
+    function flush(   k, kp, c, d, dc, dt, pct, busy, gone, iv) {
+      if (!have) return
+      for (k in cself) if (!(k in seen)) { seen[k] = 1; nprocs[ccomm[k]]++ }
+      if (nprev) {
+        dt = t - pt; if (dt <= 0) dt = 1
+        busy = (tot > ptot) ? 100 * (1 - (idle - pidle) / (tot - ptot)) : 0
+        busysum += busy; nint++
+        if (busy > pkbusy) { pkbusy = busy; pkts = ts }
+        for (k in pself) if (!(k in cself)) gone[ppar[k]] += pself[k] + pchild[k]
+        for (k in cself) {
+          split(k, kp, ":"); c = ccomm[k]
+          if (k in pself)            { d = cself[k] - pself[k]; dc = cchild[k] - pchild[k] }
+          else if (kp[2] >= pt * hz) { d = cself[k];            dc = cchild[k] }
+          else continue  # predates the last sample but was missed by it: no baseline yet
+          dc -= gone[kp[1]]
+          if (d > 0) iv[c] += d
+          if (dc > 0 && kp[1] != me) iv[c " (children)"] += dc
+        }
+        for (c in iv) {
+          used[c] += iv[c]
+          pct = 100 * iv[c] / (dt * hz); if (pct > peak[c]) peak[c] = pct
+        }
+        win += dt
+      }
+      delete pself; delete pchild; delete ppar
+      for (k in cself) { pself[k] = cself[k]; pchild[k] = cchild[k]; ppar[k] = cpar[k] }
+      delete cself; delete cchild; delete cpar
+      pt = t; ptot = tot; pidle = idle; nprev = 1
+    }
+    $1 == "S" {
+      flush(); have = 1
+      t = $2; ts = $4; tot = $5; idle = $6
+      if ($3 + 0 > pkload) pkload = $3 + 0
+      next
+    }
+    {
+      k = $1; cpar[k] = $2; cself[k] = $3; cchild[k] = $4
+      c = $0; sub(/^([^ ]+ ){4}/, "", c); ccomm[k] = c
+    }
+    END {
+      flush()
+      if (!win) { print "No samples captured."; exit }
+      printf "Captured %.0fs \xc2\xb7 CPU busy avg %.0f%%, peak %.0f%% at %s \xc2\xb7 load peak %.2f (%d cores)\n\n", \
+        win, busysum / nint, pkbusy, pkts, pkload, ncpu
+      printf "%-7s %-7s %-6s %s\n", "AVG%", "PEAK%", "PROCS", "COMMAND"
+      PROCINFO["sorted_in"] = "byval"
+      for (c in used) {
+        if (++n > 8) break
+        printf "%-7s %-7s %-6s %s\n", sprintf("%.0f%%", 100 * used[c] / (win * hz)), \
+          sprintf("%.0f%%", peak[c]), (c ~ / \(children\)$/ ? "-" : nprocs[c]), c
+      }
+      print "\n100% = one core. (children) = CPU of processes that exited unseen, billed to the parent."
+    }' "$tmp"
+  rm -f "$tmp"
 }
 
 # --- Dotfiles management ---
