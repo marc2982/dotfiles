@@ -4,3 +4,5 @@
 # read .zshenv, not .zshrc). Guarded so a missing work-dotfiles repo is harmless.
 [[ -f "$HOME/git/dotfiles-synctera/shell/worktree-fns.zsh" ]] && \
     source "$HOME/git/dotfiles-synctera/shell/worktree-fns.zsh"
+[[ -f "$HOME/git/dotfiles-synctera/shell/orbit-usage.zsh" ]] && \
+    source "$HOME/git/dotfiles-synctera/shell/orbit-usage.zsh"
