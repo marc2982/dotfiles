@@ -48,3 +48,5 @@
 	prune = true
 [diff]
 	algorithm = histogram
+	colorMoved = dimmed-zebra
+	colorMovedWS = allow-indentation-change
