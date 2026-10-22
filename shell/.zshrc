@@ -188,7 +188,7 @@ bbat() { bat -l zsh <(declare -f "$1") }
 [[ -f ~/.zshrc.local && $_pass_available -eq 1 ]] && source ~/.zshrc.local
 unset _pass_available
 
-export PATH=$PATH:/home/marc/.spicetify
+export PATH=$PATH:/home/marc/.spicetify:/home/marc/bin
 
 # bun completions
 [ -s "/home/marc/.bun/_bun" ] && source "/home/marc/.bun/_bun"
