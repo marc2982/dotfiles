@@ -6,3 +6,5 @@
     source "$HOME/git/dotfiles-synctera/shell/worktree-fns.zsh"
 [[ -f "$HOME/git/dotfiles-synctera/shell/orbit-usage.zsh" ]] && \
     source "$HOME/git/dotfiles-synctera/shell/orbit-usage.zsh"
+[[ -f "$HOME/git/dotfiles-synctera/shell/undeployed.zsh" ]] && \
+    source "$HOME/git/dotfiles-synctera/shell/undeployed.zsh"
